@@ -1,2 +1,1 @@
-# EasyMetaG
-EasyMetaG is a user-friendly tool to extract features from metagenomics samples, build graph based on extracted features, and predict disease of the samples.
+#  GDmicro - Use GCN and domain adaptation to predict disease based on microbiome data.
