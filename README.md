@@ -1,4 +1,4 @@
-#  GDmicro - Use GCN and domain adaptation network to predict disease based on microbiome data.
+#  GDmicro - Use GCN and deep adaptation network to predict disease based on microbiome data.
 
 ### Dependencies:
 * Python ==3.7.x
