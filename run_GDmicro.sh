@@ -23,7 +23,15 @@
 
 
 # Train mode - Train the data using 10-fold cross validation (without pre-selected features).
-python GDmicro.py -i Test_datasets/IBD_metaphlan2_val_train_mode -t 1 -d IBD -o GDmicro_test/IBD_val_train_mode
+python GDmicro.py -i Test_datasets/Obt_metaphlan2_val_train_mode -t 1 -d Obt -o GDmicro_test/Obt_val_tm_1 &&\
+python GDmicro.py -i Test_datasets/Obt_metaphlan2_val_train_mode -t 1 -d Obt -o GDmicro_test/Obt_val_tm_2 &&\
+python GDmicro.py -i Test_datasets/Obt_metaphlan2_val_train_mode -t 1 -d Obt -o GDmicro_test/Obt_val_tm_3 &&\
+python GDmicro.py -i Test_datasets/Obt_metaphlan2_val_train_mode -t 1 -d Obt -o GDmicro_test/Obt_val_tm_4 &&\
+python GDmicro.py -i Test_datasets/Obt_metaphlan2_val_train_mode -t 1 -d Obt -o GDmicro_test/Obt_val_tm_5 &&\
+python GDmicro.py -i Test_datasets/Obt_metaphlan2_val_train_mode -t 1 -d Obt -o GDmicro_test/Obt_val_tm_6 &&\
+python GDmicro.py -i Test_datasets/Obt_metaphlan2_val_train_mode -t 1 -d Obt -o GDmicro_test/Obt_val_tm_7 &&\
+python GDmicro.py -i Test_datasets/Obt_metaphlan2_val_train_mode -t 1 -d Obt -o GDmicro_test/Obt_val_tm_8 &&\
+python GDmicro.py -i Test_datasets/Obt_metaphlan2_val_train_mode -t 1 -d Obt -o GDmicro_test/Obt_val_tm_9
 
 ################### CRC #######
 #python GDmicro.py -i Test_datasets/CRC_motu2_merge_tem -d CRC -o  GDmicro_test/CRC_CHI_41_wl

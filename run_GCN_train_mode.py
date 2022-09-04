@@ -227,7 +227,7 @@ def node_importance_check(selected,selected_arr,tem_train_id,val_idx,features,ad
     
 
 
-def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features):
+def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode):
     if not rseed==0:
         setup_seed(rseed)
     f0=open(insp,'r')
@@ -349,15 +349,16 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,f
         os.system('rm '+uid+'.log')
 
         ## Node importance
-        selected={}
-        selected_arr=[]
-        o5=open(rdir+'/node_importance_single_fold'+str(fn+1)+'.txt','w+')
-        o6=open(rdir+'/node_importance_combination_fold'+str(fn+1)+'.txt','w+')
-        uid=uuid.uuid1().hex
-        ot2=open(uid+'.log','w+')
-        node_importance_check(selected,selected_arr,tem_train_id,val_idx,features,adj,labels,rdir,fn,classes_dict,tid2name,o5,o6,ot2,nnum)
-        ot2.close()
-        os.system('rm '+uid+'.log')
+        if anode==1:
+            selected={}
+            selected_arr=[]
+            o5=open(rdir+'/node_importance_single_fold'+str(fn+1)+'.txt','w+')
+            o6=open(rdir+'/node_importance_combination_fold'+str(fn+1)+'.txt','w+')
+            uid=uuid.uuid1().hex
+            ot2=open(uid+'.log','w+')
+            node_importance_check(selected,selected_arr,tem_train_id,val_idx,features,adj,labels,rdir,fn,classes_dict,tid2name,o5,o6,ot2,nnum)
+            ot2.close()
+            os.system('rm '+uid+'.log')
 
         fn+=1
 

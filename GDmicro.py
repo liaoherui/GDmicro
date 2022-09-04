@@ -384,7 +384,7 @@ def pack_output_nl(tem,rdir):
 
 
 
-def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv):
+def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode):
     if not rseed==0:
         setup_seed(rseed)
     # Load species name -> for feature importance
@@ -550,15 +550,16 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         
 
         ##### Node importance
-        selected={}
-        selected_arr=[]
-        o5=open(rdir+'/node_importance_single_fold'+str(fn+1)+'.txt','w+')
-        o6=open(rdir+'/node_importance_combination_fold'+str(fn+1)+'.txt','w+')
-        uid=uuid.uuid1().hex
-        ot2=open(uid+'.log','w+')
-        node_importance_check(selected,selected_arr,tem_train_id,val_idx,test_idx,features,adj,labels,rdir,fn,classes_dict,tid2name,o5,o6,wwl,ot2,nnum,close_cv)
-        ot2.close()
-        os.system('rm '+uid+'.log')
+        if anode==1:
+            selected={}
+            selected_arr=[]
+            o5=open(rdir+'/node_importance_single_fold'+str(fn+1)+'.txt','w+')
+            o6=open(rdir+'/node_importance_combination_fold'+str(fn+1)+'.txt','w+')
+            uid=uuid.uuid1().hex
+            ot2=open(uid+'.log','w+')
+            node_importance_check(selected,selected_arr,tem_train_id,val_idx,test_idx,features,adj,labels,rdir,fn,classes_dict,tid2name,o5,o6,wwl,ot2,nnum,close_cv)
+            ot2.close()
+            os.system('rm '+uid+'.log')
         
 
         fn+=1
@@ -652,11 +653,13 @@ def main():
     parser.add_argument('-i','--input_dir',dest='input_dir',type=str,help="The directory of all input datasets. Should be the output of GDmicro_preprocess")
     parser.add_argument('-t','--train_mode',dest='train_mode',type=str,help="If set to 1, then will apply k-fold cross validation to all input datasets. This mode can only be used when input datasets are all training data. The input data should be the output of the train mode of GDmicro_preprocess. (default: 0)")
     #parser.add_argument('-v','--close_cv',dest='close_cv',type=str,help="If set to 1, will close the k-fold cross-validation and use all datasets for training. Only work when \"train mode\" is off (-t 0). (default: 0)")
+    
     parser.add_argument('-d','--disease',dest='disease',type=str,help="The name of the disease.")
     parser.add_argument('-k','--kneighbor',dest='kneighbor',type=str,help="The number of neighborhoods in the knn graph. (default: 5)")
+    parser.add_argument('-e','--apply_node',dest='anode',type=str,help="If set to 1, then will apply node importance calculation, which may take a long time. (default: not use).")
     parser.add_argument('-n','--node_num',dest='nnum',type=str,help="How many nodes will be output during the node importance calculation process. (default:20).")
     #parser.add_argument('-f','--feature_num',dest='fnum',type=str,help="How many features will be output during the feature importance calculation process. (default:20)")
-    parser.add_argument('-c','--cvfold',dest='cvfold',type=str,help="The number of k in k-fold cross validation.  (default: 10)")
+    parser.add_argument('-c','--cvfold',dest='cvfold',type=str,help="The value of k in k-fold cross validation.  (default: 10)")
     parser.add_argument('-s','--randomseed',dest='rseed',type=str,help="The random seed used to reproduce the result.  (default: not use)")
     parser.add_argument('-a','--domain_adapt',dest='doadpt',type=str,help="Whether apply domain adaptation to the test dataset. If set to 0, then will use MLP rather than domain adaptation. (default: use)")
 
@@ -670,6 +673,7 @@ def main():
     #eg_fs=args.eg_fs
     #eg_fs_norm=args.eg_fs_norm
     #meta=args.meta
+    anode=args.anode
     disease=args.disease
     nnum=args.nnum
     #fnum=args.fnum
@@ -688,6 +692,10 @@ def main():
     else:
         close_cv=int(close_cv)
     '''
+    if not anode:
+        anode=0
+    else:
+        anode=int(anode)
     if not nnum:
         nnum=20
     else:
@@ -725,10 +733,10 @@ def main():
     
     if train_mode==0:
         input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features=scan_input(indir,disease)
-        run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv)
+        run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode)
     else:
         input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features=scan_input_train_mode(indir,disease)
-        run_GCN_train_mode.run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features)
+        run_GCN_train_mode.run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode)
 
 
 
