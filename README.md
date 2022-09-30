@@ -11,9 +11,9 @@
 ## Usage
 
 ### Use GDmicro_preprocess to pre-process your data.<BR/>
-   1. Pre-process both the training and testing data.
+   1. Pre-process both the training and testing data.<BR/>
   `python GDmicro_preprocess.py.py -i <Input_train_dir> -b <Input_test_dir> -o <Output_dir> -d <disease>`<BR/>
-   2. Pre-process training data only. (Under training mode)
+   2. Pre-process training data only. (Under training mode)<BR/>
   `python GDmicro_preprocess.py.py -i <Input_train_dir> -t 1 -o <Output_dir> -d <disease>`<BR/>
 
 ### Use GDmicro to predict disease for input samples.<BR/>
