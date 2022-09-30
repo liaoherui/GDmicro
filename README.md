@@ -43,5 +43,4 @@
     -s, --randomseed              The random seed. (default: not use)
     -a, --domain_adapt            Whether apply domain adaptation to the test dataset. If set to 0, then will use cross-entropy loss rather than domain adaptation loss. (default: use).
     -o, --outdir                  Output directory of test results. (Default: GDmicro_res).
-  
   ```
