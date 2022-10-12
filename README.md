@@ -15,7 +15,7 @@
    
   `python GDmicro_preprocess.py.py -i <Input_train_dir> -b <Input_test_dir> -o <Output_dir> -d <disease>`<BR/>
   
-   1.2. If you don't have test data, pre-process training data only. In other words, all input data have labels. (Under training mode)<BR/>
+   1.2. If you don't have test data, pre-process training data only. In other words, all input data should have labels. (Under training mode)<BR/>
    
   `python GDmicro_preprocess.py.py -i <Input_train_dir> -t 1 -o <Output_dir> -d <disease>`<BR/>
 
