@@ -65,3 +65,32 @@
   ```
   
   ## Output
+The default output folder is named "GDmicro_res", and output files in this folder are shown below.
+
+ ```
+GDmicro_res
+|-Feature_file/
+|-Graph_file/
+|-Res_file/
+    |-final_predict_metrics.txt
+    |-sample_prob.txt
+    |-sample_kneighbors_all.txt
+    |-feature_importance.txt
+```
+final_predict_metrics.txt
+-------------------------
+This file contains the final prediction metrics including train AUC, test AUC, etc.
+
+sample_prob.txt
+---------------
+This file contains the sample name, prediction probability of T/P labels, predicted labels, and true labels. Note: For test samples without true labels, the true labels are the predicted labels.
+
+sample_kneighbors_all.txt
+-------------------------
+This file contains the neighbor information of the constructed graph. Each line contains the sample and all its neighbors in the constructed knn graph.
+
+feature_importance.txt
+----------------------
+This file contains the feature importance information. All features are ranked by the importance in the descending order.
+
+
