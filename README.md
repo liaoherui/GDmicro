@@ -77,6 +77,14 @@ GDmicro_res
     |-sample_kneighbors_all.txt
     |-feature_importance.txt
 ```
+Feature_file
+------------
+This folder contains files used by the feature selection program and DAN model.
+
+Graph_file
+-------------------------
+This folder contains files used in the graph construction process.
+
 final_predict_metrics.txt
 -------------------------
 This file contains the final prediction metrics including train AUC, test AUC, etc.
