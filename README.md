@@ -3,7 +3,7 @@
 ### Dependencies:
 * Python ==3.7.x
 * R
-* Required python package: numpy, pandas, matplotlib, higra, scipy, scikit-learn, networkx, pytorch, torchvision, torchaudio, cudatoolkit, hiddenlayer, ipython
+
 
 ## Install
 
