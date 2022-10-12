@@ -11,13 +11,26 @@
 ## Usage
 
 ### Use GDmicro_preprocess to pre-process your data.<BR/>
-   1. Pre-process both the training and testing data.<BR/>
+   1.1. Pre-process both the training and testing data.<BR/>
+   
   `python GDmicro_preprocess.py.py -i <Input_train_dir> -b <Input_test_dir> -o <Output_dir> -d <disease>`<BR/>
-   2. Pre-process training data only. (Under training mode)<BR/>
+  
+   1.2. If you don't have test data, pre-process training data only. In other words, all input data have labels. (Under training mode)<BR/>
+   
   `python GDmicro_preprocess.py.py -i <Input_train_dir> -t 1 -o <Output_dir> -d <disease>`<BR/>
 
 ### Use GDmicro to predict disease for input samples.<BR/>
- 
+   2.1. Apply GDmicro to predict the health status of your test samples.<BR/>
+   
+   `python GDmicro.py -i <Input_dir> -d <disease> -o <Outputdir>`<BR/>
+   
+   Note: the `<Input_dir>` should be the `<Output_dir>` of 1.1.<BR/>
+    
+   2.2. Apply GDmicro to do the k-fold cross-validation on your training samples. (Under training mode)<BR/> 
+
+   `python GDmicro.py -i <Input_dir> -d <disease> -t 1 -o <Outputdir>`<BR/>
+   
+   Note: the `<Input_dir>` should be the `<Output_dir>` of 1.2.<BR/>
 
 ### Full command-line options
 
