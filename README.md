@@ -10,7 +10,7 @@
 
 ## Usage
 ### Instruction about input data.<BR/>
-To use GDmicro, you are supposed to put all your input training and test data in two folders (e.g. `GDmicro_train` and `GDmicro_test`). Here, we give an example about the input data format for users' reference.
+To use GDmicro, you are supposed to put all your input training and test data in two folders (e.g. `<Input_train_dir>` and `<Input_test_dir>`). Here, we give an example (named  `GDmicro_train` and `GDmicro_test`) about the input data format for users' reference.
 
 ### Use GDmicro_preprocess to pre-process your data.<BR/>
    1.1. Pre-process both the training and testing data.<BR/>
