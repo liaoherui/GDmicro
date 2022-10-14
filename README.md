@@ -123,10 +123,10 @@ This file contains the sample name, prediction probability of T/P labels, predic
 
 sample_kneighbors_all.txt
 -------------------------
-This file contains the neighbor information of the constructed graph. Each line contains the sample and all its neighbors in the constructed knn graph.
+This file contains the neighbor information of each node in the constructed graph. Each line contains the sample and all its neighbors in the constructed knn graph.
 
 feature_importance.txt
 ----------------------
-This file contains the feature importance information. All features are ranked by the importance in the descending order.
+This file contains the identified biomarkers information. All features are ranked by the importance with the descending order.
 
 
