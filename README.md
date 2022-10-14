@@ -89,11 +89,11 @@ GDmicro_res
 ```
 Feature_file
 ------------
-This folder contains files used by the feature selection program and DAN model.
+This folder contains files used and files output by the feature selection program and DAN model.
 
 Graph_file
 -------------------------
-This folder contains files used in the graph construction process.
+This folder contains files used and files output in the graph construction process.
 
 final_predict_metrics.txt
 -------------------------
