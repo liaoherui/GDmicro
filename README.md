@@ -36,7 +36,7 @@ The `Test_datasets` can be downloaded through here.
  
 - [Data Format Details Introduction](data_format.md)
   - [EggNOG Abundance Matrix File](data_format.md#eggNOG_File)
-  - [Sp Abundance Matrix  File](data_format.md#sp_File)
+  - [Species Abundance Matrix File](data_format.md#sp_File)
   - [Metadata File](data_format.md#metadata_File)
  
 
