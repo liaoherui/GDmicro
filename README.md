@@ -2,11 +2,19 @@
 
 ### Dependencies:
 * Python ==3.7.x (3.7.3 is recommended)
-* R
+* R ==3.6.1
 
 
 ## Install
+Yon can install GDmicro via [Anaconda](https://anaconda.org/) using the commands below:<BR/>
 
+`git clone https://github.com/liaoherui/GDmicro.git`<BR/>
+`cd GDmicro`<BR/>
+
+`conda env create -f environment.yaml`<BR/>
+`conda activate gdmicro`<BR/>
+
+`python GDmicro -h`<BR/>
 
 ## Usage
 ### Instruction about input data.<BR/>
