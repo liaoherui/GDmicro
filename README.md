@@ -34,10 +34,10 @@ The `Test_datasets` can be downloaded through here.
     |-IBD_meta_matrix.tsv
  ```
  
-- [Data Format Details Introduction](docs/data_format.md)
-  - [EggNOG Abundance Matrix File](docs/data_format.md#eggNOG_File)
-  - [Sp Abundance Matrix  File](docs/data_format.md#sp_File)
-  - [Metadata File](docs/data_format.md#metadata_File)
+- [Data Format Details Introduction](data_format.md)
+  - [EggNOG Abundance Matrix File](data_format.md#eggNOG_File)
+  - [Sp Abundance Matrix  File](data_format.md#sp_File)
+  - [Metadata File](data_format.md#metadata_File)
  
 
 
