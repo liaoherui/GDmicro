@@ -28,15 +28,13 @@ The `Test_datasets` can be downloaded through here.
     |-IBD_eggNOG_matrix.csv
     |-IBD_sp_matrix.csv
     |-IBD_meta_matrix.tsv
-|-Input_test_with_label/
-    |-IBD_eggNOG_matrix.csv
-    |-IBD_sp_matrix.csv
-    |-IBD_meta_matrix.tsv
-|-Input_test_no_label/
+|-Input_test/
     |-IBD_eggNOG_matrix.csv
     |-IBD_sp_matrix.csv
     |-IBD_meta_matrix.tsv
  ```
+ 
+ 
 
 
 
