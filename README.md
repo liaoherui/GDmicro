@@ -14,7 +14,8 @@ Yon can install GDmicro via [Anaconda](https://anaconda.org/) using the commands
 `conda env create -f environment.yaml`<BR/>
 `conda activate gdmicro`<BR/>
 
-`python GDmicro -h`<BR/>
+`python GDmicro.py -h`<BR/>
+`python GDmicro_preprocess.py -h`<BR/>
 
 ## Usage
 ### Instruction about input data.<BR/>
