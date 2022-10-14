@@ -127,6 +127,6 @@ This file contains the neighbor information of each node in the constructed grap
 
 feature_importance.txt
 ----------------------
-This file contains the identified biomarkers information. All features are ranked by the importance with the descending order.
+This file contains the identified biomarkers information. All features are ranked by the importance in the descending order.
 
 
