@@ -29,5 +29,5 @@ An example of data without known label is shown below:
 <img src="https://github.com/liaoherui/GDmicro/blob/main/Images/meta_no_label.png" width = "400" height = "200" >  
 <br />
 
-If you provide the label for the test data, then the program will calculate related prediction metrics on test data for you. Otherwise, the output will only include metrics on training data. The filenames must be **\<disease\>_meta.csv**, where **\<disease\>** should be the prefix of tested disease that is the same as the one in metadata file. E.g. IBD, CRC, T2D, etc
+If you provide the label for the test data, then the program will calculate related prediction metrics on test data for you. Otherwise, the output will only include metrics on training data. The filenames must be **\<disease\>_meta.tsv**, where **\<disease\>** should be the prefix of tested disease that is the same as the one in metadata file. E.g. IBD, CRC, T2D, etc
 
