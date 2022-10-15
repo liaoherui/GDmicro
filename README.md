@@ -57,7 +57,7 @@ The `Test_datasets` and all other datasets used in the paper can be downloaded t
    
   `python GDmicro_preprocess.py.py -i <Input_train_dir> -t 1 -o <Output_dir> -d <disease>`<BR/>
   
-   ! Note, the complete example commands using example datasets can be found in `sh run_GDmicro_demo.sh`
+   ! Note, the complete demo commands using example datasets can be found in `run_GDmicro_demo.sh`
   
 ### Use GDmicro to predict disease for input samples.<BR/>
    2.1. Apply GDmicro to predict the health status of your test samples.<BR/>
@@ -72,7 +72,7 @@ The `Test_datasets` and all other datasets used in the paper can be downloaded t
    
    Note: the `<Input_dir>` should be the `<Output_dir>` of 1.2.<BR/> 
    
-   ! Note, the complete example commands using example datasets can be found in `sh run_GDmicro_demo.sh`
+   ! Note, the complete demo commands using example datasets can be found in `run_GDmicro_demo.sh`
  
    
 
