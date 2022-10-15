@@ -20,7 +20,7 @@ Yon can install GDmicro via [Anaconda](https://anaconda.org/) using the commands
 ## Usage
 ### Instruction about input data.<BR/>
 To use GDmicro, you are supposed to put all your input training and test data in two folders (e.g. `<Input_train_dir>` and `<Input_test_dir>`). Here, we give an example (three folders named  `Test_datasets/Input_train`, `Test_datasets/Input_test_with_label`, and `Test_datasets/Input_test_no_label`) about the input data format for users' reference.
-The `Test_datasets` can be downloaded through here.
+The `Test_datasets` and all other datasets used in the paper can be downloaded through here.
  For both training and predicting, the data mainly consists of three files: (1)eggNOG abundance matrix file; (2)species abundance matrix file; (3)metadata file
  ```
  Test_datasets
