@@ -17,6 +17,10 @@ Yon can install GDmicro via [Anaconda](https://anaconda.org/) using the commands
 `python GDmicro.py -h`<BR/>
 `python GDmicro_preprocess.py -h`<BR/>
 
+If you have installed GDmicro and downloaded the [Test_datasets](https://drive.google.com/drive/u/0/folders/1Ud-cXOMBc67h1NEYtPXmkbQf8B7cQgSC). Then you can test GDmicro with the example datasets using the command below.
+
+`sh run_GDmicro_demo.sh`<BR/>
+
 ## Usage
 ### Instruction about input data.<BR/>
 To use GDmicro, you are supposed to put all your input training and test data in two folders (e.g. `<Input_train_dir>` and `<Input_test_dir>`). Here, we give an example (two folders named  `Test_datasets/Input_train`, `Test_datasets/Input_test`) about the input data format for users' reference.
