@@ -632,7 +632,7 @@ def scan_input(indir,disease):
     # Check whether features are pre-selected.
     print('Scan whether the pre-selected features available...')
     pre_features={}
-    if not os.path.exists(indir+'/kfold_features'):
+    if not os.path.exists(indir+'/pre_features'):
         print('Can not find the dir of pre-selected features, will re-select features!')
     for filename in os.listdir(indir+'/pre_features'):
         pre=re.split('_',filename)[0]
