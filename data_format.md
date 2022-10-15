@@ -26,7 +26,7 @@ An example of data with known label is shown below:
 
 An example of data without known label is shown below:  
 <br />
-<img src="https://github.com/liaoherui/GDmicro/blob/main/Images/meta_with_label.png" width = "400" height = "200" >  
+<img src="https://github.com/liaoherui/GDmicro/blob/main/Images/meta_no_label.png" width = "400" height = "200" >  
 <br />
 
 The filenames must be **\<disease\>_meta.csv**, where **\<disease\>** should be the prefix of tested disease that is the same as the one in metadata file. E.g. IBD, CRC, T2D, etc
