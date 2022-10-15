@@ -282,8 +282,8 @@ def main():
         print('Train mode - Preprocess 3 - Convert normalized matrices to node feature format.')
         trans2node(out+"/"+dtype+'_train_sp_norm.csv',out+"/"+dtype+'_meta.tsv',out+"/"+dtype+'_sp_train_norm_node.csv')
 
-    if os.path.exists(intrain+'/kfold_features'):
-        os.system('cp -rf '+intrain+'/kfold_features '+out)
+    if os.path.exists(intrain+'/pre_features'):
+        os.system('cp -rf '+intrain+'/pre_features '+out)
 
         
 
