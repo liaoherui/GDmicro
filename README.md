@@ -33,11 +33,11 @@ The `Test_datasets` and all other datasets used in the paper can be downloaded t
 |-Input_train/
     |-IBD_eggNOG_matrix.csv
     |-IBD_sp_matrix.csv
-    |-IBD_meta_matrix.tsv
+    |-IBD_meta.tsv
 |-Input_test/
     |-IBD_eggNOG_matrix.csv
     |-IBD_sp_matrix.csv
-    |-IBD_meta_matrix.tsv
+    |-IBD_meta.tsv
  ```
  
 - [Data Format Details Introduction](data_format.md)
