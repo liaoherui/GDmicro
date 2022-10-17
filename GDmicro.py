@@ -635,12 +635,13 @@ def scan_input(indir,disease):
     pre_features={}
     if not os.path.exists(indir+'/pre_features'):
         print('Can not find the dir of pre-selected features, will re-select features!')
-    for filename in os.listdir(indir+'/pre_features'):
-        pre=re.split('_',filename)[0]
-        pre=re.sub('Fold','',pre)
-        pre=int(pre)
-        fp=open(indir+'/pre_features/'+filename,'r')
-        pre_features[pre]=indir+'/pre_features/'+filename
+    else:
+        for filename in os.listdir(indir+'/pre_features'):
+            pre=re.split('_',filename)[0]
+            pre=re.sub('Fold','',pre)
+            pre=int(pre)
+            fp=open(indir+'/pre_features/'+filename,'r')
+            pre_features[pre]=indir+'/pre_features/'+filename
 
     
     return input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features
