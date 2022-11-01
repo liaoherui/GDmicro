@@ -1,4 +1,4 @@
-#  GDmicro - Use GCN and deep adaptation network to predict disease based on microbiome data.
+#  GDmicro - Use GCN and Deep adaptation network to predict disease based on microbiome data.
 
 Input and core components: GDmicro takes eggNOG and species abundance data as input. It utilizes GCN and deep adaptation network to improve the prediction accuracy and robustness.
 
