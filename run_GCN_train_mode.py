@@ -224,12 +224,46 @@ def node_importance_check(selected,selected_arr,tem_train_id,val_idx,features,ad
         sid+=1
     o6.close()
 
-    
+def trans_node(infile,meta,ofile):
+    f=open(meta,'r')
+    line=f.readline()
+    arr=[]
+    while True:
+        line=f.readline().strip()
+        if not line:break
+        ele=line.split('\t')
+        arr.append(ele[3])
+    a=pd.read_table(infile)
+    a=np.array(a).T
+    c=0
+    o=open(ofile,'w+')
+    for s in a:
+        o.write(str(c))
+        for e in s:
+            o.write('\t'+str(e))
+        o.write('\t'+arr[c]+'\n')
+        c+=1
+    o.close()
+
+def load_dcs(infile,dcs):
+    f=open(infile,'r')
+    line=f.readline()
+    cs=0
+    while True:
+        line=f.readline().strip()
+        if not line:break
+        ele=line.split('\t')
+        dcs[cs]=ele[0]
+        cs+=1
+ 
 
 
-def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode):
+def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode,reverse):
     if not rseed==0:
         setup_seed(rseed)
+    dcs={}
+    load_dcs(insp,dcs)
+    '''
     f0=open(insp,'r')
     line=f0.readline()
     dcs={}
@@ -240,6 +274,7 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,f
         ele=line.split('\t')
         dcs[cs]=ele[0]
         cs+=1
+    '''
     idx_features_labels = np.genfromtxt("{}".format(input_fs),dtype=np.dtype(str))
     features=idx_features_labels[:, 1:-1]
     features=features.astype(float)
@@ -298,6 +333,17 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,f
             eg_fs_sf=select_features(eg_fs,eg_fs_norm,train_idx,fdir,meta,disease,fn+1)
         else:
             eg_fs_sf=pre_features[fn+1]
+
+        if reverse==1:
+            otem=uuid.uuid1().hex+'.csv'
+            eg_node=trans_node(eg_fs_sf,meta,otem)
+            idx_features_labels = np.genfromtxt("{}".format(otem),dtype=np.dtype(str))
+            features=idx_features_labels[:, 1:-1]
+            features=features.astype(float)
+            features=np.array(features)
+            os.system('rm '+otem)
+            dcs={}
+            load_dcs(eg_fs_sf,dcs)
         # Usa all features
         '''
         eg_fs_sf=eg_fs_norm
@@ -305,7 +351,10 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,f
         # Train MLP on selected features 10 times and selecte the best model to build the graph
         #exit()
         #graph=run_MLP_embedding.build_graph_mlp('../New_datasets/T2D_data_2012_Trans/T2D_eggNOG_norm.txt',train_idx,val_idx,meta,disease,fn+1,gdir)
-        graph=run_MLP_embedding_train_mode.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,kneighbor,rseed,rdir)
+        if reverse==0:
+            graph=run_MLP_embedding_train_mode.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,kneighbor,rseed,rdir)
+        else:
+            graph=run_MLP_embedding_train_mode.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,kneighbor,rseed,rdir)
         #exit()
 
         # Train and testing 

@@ -33,6 +33,8 @@ def build_dir(inp):
         os.makedirs(inp)
 
 def select_features(eg_fs,eg_fs_norm,train_idx,fdir,meta,disease,fn):
+    #print(train_idx)
+    #exit()
     inmatrix=pd.read_table(eg_fs)
     inmatrix=inmatrix.iloc[:,train_idx]
     inmatrix.to_csv("tem_e.tsv",sep="\t")
@@ -382,12 +384,46 @@ def pack_output_nl(tem,rdir):
     if tem==0:
         os.system('rm -rf '+temd)
 
+def trans_node(infile,meta,ofile):
+    f=open(meta,'r')
+    line=f.readline()
+    arr=[]
+    while True:
+        line=f.readline().strip()
+        if not line:break
+        ele=line.split('\t')
+        arr.append(ele[3])
+    a=pd.read_table(infile)
+    a=np.array(a).T
+    c=0
+    o=open(ofile,'w+')
+    for s in a:
+        o.write(str(c))
+        for e in s:
+            o.write('\t'+str(e))
+        o.write('\t'+arr[c]+'\n')
+        #o.write('\n')
+        c+=1
+    o.close()
 
+def load_dcs(infile,dcs):
+    f=open(infile,'r')
+    line=f.readline()
+    cs=0
+    while True:
+        line=f.readline().strip()
+        if not line:break
+        ele=line.split('\t')
+        dcs[cs]=ele[0]
+        cs+=1
 
-def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode):
+def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse):
     if not rseed==0:
         setup_seed(rseed)
     # Load species name -> for feature importance
+    dcs={}
+    load_dcs(insp,dcs)
+    '''
     f0=open(insp,'r')
     line=f0.readline()
     dcs={}
@@ -398,8 +434,8 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         ele=line.split('\t')
         dcs[cs]=ele[0]
         cs+=1
+    '''
     
-
     idx_features_labels = np.genfromtxt("{}".format(input_fs),dtype=np.dtype(str))
     features=idx_features_labels[:, 1:-1]
     features=features.astype(float)
@@ -479,6 +515,21 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
             else:
                 eg_fs_sf=select_features(eg_fs,eg_fs_norm,train_idx,fdir,meta,disease,fn+1)
              
+        # If reverse, then transfer eggNOG features to node features
+        if reverse==1:
+            otem=uuid.uuid1().hex+'.csv'
+            eg_node=trans_node(eg_fs_sf,meta,otem)
+            idx_features_labels = np.genfromtxt("{}".format(otem),dtype=np.dtype(str))
+            features=idx_features_labels[:, 1:-1]
+            features=features.astype(float)
+            features=np.array(features)
+            os.system('rm '+otem)
+            dcs={}
+            load_dcs(eg_fs_sf,dcs)
+
+
+
+
         #eg_fs_sf='CRC_41_GCN/FRA_k10/Feature_File/eggNOG_features_Fold1.tsv'
         # Usa all features
         '''
@@ -488,9 +539,15 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         #exit()
         #graph=run_MLP_embedding.build_graph_mlp('../New_datasets/T2D_data_2012_Trans/T2D_eggNOG_norm.txt',train_idx,val_idx,meta,disease,fn+1,gdir)
         if doadpt==1:
-            graph=run_MLP_embedding_da.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
+            if reverse==0:
+                graph=run_MLP_embedding_da.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
+            else:
+                graph=run_MLP_embedding_da.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
         else:
-            graph=run_MLP_embedding.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
+            if reverse==0:
+                graph=run_MLP_embedding.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
+            else:
+                graph=run_MLP_embedding.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
         #exit()
 
         # Train and testing 
@@ -664,6 +721,7 @@ def main():
     parser.add_argument('-c','--cvfold',dest='cvfold',type=str,help="The value of k in k-fold cross validation.  (default: 10)")
     parser.add_argument('-s','--randomseed',dest='rseed',type=str,help="The random seed used to reproduce the result.  (default: not use)")
     parser.add_argument('-a','--domain_adapt',dest='doadpt',type=str,help="Whether apply domain adaptation to the test dataset. If set to 0, then will use MLP rather than domain adaptation. (default: use)")
+    parser.add_argument('-r','--reverse',dest='reverse',type=str,help="If set to 1, then will use functional data as node features, and compostitional data to build edges. (default: 0)")
 
     parser.add_argument('-o','--outdir',dest='outdir',type=str,help="Output directory of test results. (Default: GDmicro_res)")
 
@@ -682,6 +740,7 @@ def main():
     kneighbor=args.kneighbor
     #fuse=args.fuse
     cvfold=args.cvfold
+    reverse=args.reverse
     rseed=args.rseed
     doadpt=args.doadpt
 
@@ -694,6 +753,10 @@ def main():
     else:
         close_cv=int(close_cv)
     '''
+    if not reverse:
+        reverse=0
+    else:
+        reverse=int(reverse)
     if not anode:
         anode=0
     else:
@@ -735,10 +798,10 @@ def main():
     
     if train_mode==0:
         input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features=scan_input(indir,disease)
-        run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode)
+        run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse)
     else:
         input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features=scan_input_train_mode(indir,disease)
-        run_GCN_train_mode.run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode)
+        run_GCN_train_mode.run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode,reverse)
 
 
 
