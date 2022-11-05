@@ -3,7 +3,7 @@
 Input and core components: GDmicro takes eggNOG and species abundance data as input. It utilizes GCN and deep adaptation network to improve the prediction accuracy and robustness.
 
 You can use GDmicro to:
- 1. Predict disease for your test samples. As shown in our experiments, GDmicro has good performance even training and test data are from different studies.
+ 1. Predict disease for your test samples. As shown in our experiments, GDmicro has good performance even training and test data are from different studies and sampled from different countries.
  2. Explore disease-related species (potential biomarkers).
  3. Explore the sample relationship of your metagenomic samples through the knn graph constructed by GDmicro.
 
