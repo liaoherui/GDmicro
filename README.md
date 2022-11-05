@@ -138,7 +138,7 @@ GDmicro_res
 ```
 Feature_file
 ------------
-This folder contains files used and files output by the feature selection program and DAN model.
+This folder contains files used and files output by the feature selection program and deep adaptation network.
 
 Graph_file
 -------------------------
