@@ -9,6 +9,7 @@ You can use GDmicro to:
 
 Workflow: To remove domain discrepency between training and test data, deep adaptation network will be used to learn the latent features from input eggNOG abundance data. Then, we will build a sample similarity graph based on these robust latent features, where node features are represented by species abundance features.  Finally, GCN will take this graph as input and predict labels for test samples. <!---The overview of GDmicro is show below.-->
 
+
 <!---
 <img src="https://github.com/liaoherui/GDmicro/blob/main/Images/GDmicro_github.png" width = "800" height = "450" >  
 -->
@@ -159,5 +160,9 @@ This file contains the neighbor information of each node in the constructed grap
 feature_importance.txt
 ----------------------
 This file contains the identified biomarkers information. All features are ranked by the importance in the descending order.
+
+  ## -Contact-
+  
+ If you have any questions, please email us: heruiliao2-c@my.cityu.edu.hk
 
 
