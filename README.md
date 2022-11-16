@@ -1,13 +1,13 @@
-#  GDmicro - Use GCN and Deep adaptation network to predict disease based on microbiome data.
+#  GDmicro - Use GCN and Deep adaptation network to classify host disease status based on human gut microbiome data.
 
-Input and core components:  __GDmicro takes eggNOG and species abundance data as input.__ It utilizes GCN and deep adaptation network to improve the prediction performance and robustness.
+Input and core components:  __GDmicro takes eggNOG and species abundance data as input.__ It utilizes GCN and deep adaptation network to improve the classification performance and robustness.
 
 You can use GDmicro to:
- 1. Predict disease for your test samples. As shown in our experiments, GDmicro has good performance even training and test data are from different studies and sampled from different countries.
+ 1. Classify disease status for your test samples. As shown in our experiments, GDmicro has good performance even training and test data are from different studies and sampled from different countries.
  2. Explore disease-related species (potential biomarkers).
  3. Explore the sample relationship of your metagenomic samples through the knn graph constructed by GDmicro.
 
-Workflow: To remove domain discrepency between training and test data, deep adaptation network will be used to learn the latent features from input eggNOG abundance data. Then, we will build a sample similarity graph based on these robust latent features, where node features are represented by species abundance features.  Finally, GCN will take this graph as input and predict labels for test samples. <!---The overview of GDmicro is show below.-->
+Workflow: To remove domain discrepency between training and test data, deep adaptation network will be used to learn the latent features from input eggNOG abundance data. Then, we will build a sample similarity graph based on these robust latent features, where node features are represented by species abundance features.  Finally, GCN will take this graph as input and classify labels for test samples. <!---The overview of GDmicro is show below.-->
 
 
 <!---
@@ -74,7 +74,7 @@ The `Test_datasets` and all other datasets used in the paper can be downloaded t
   
    ! Note, the complete demo commands using example datasets can be found in `run_GDmicro_demo.sh`
   
-### Use GDmicro to predict disease for input samples.<BR/>
+### Use GDmicro to classify disease status for input samples.<BR/>
    2.1. Apply GDmicro to predict the health status of your test samples.<BR/>
    
    `python GDmicro.py -i <Input_dir> -d <disease> -o <Outputdir>`<BR/>
@@ -108,7 +108,7 @@ The `Test_datasets` and all other datasets used in the paper can be downloaded t
  
   `python GDmicro.py.py -h`<BR/>
   ```
-  GDmicro - Use GCN and deep adaptation network to predict disease based on microbiome data.
+  GDmicro - Use GCN and deep adaptation network to classify disease status based on human gut microbiome data.
   
   optional arguments:
     -h, --help                    Show help message and exit.
