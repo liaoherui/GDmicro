@@ -93,7 +93,7 @@ The `Test_datasets` and all other datasets used in the paper can be downloaded t
 
 ### Full command-line options
 
- `python GDmicro_preprocess.py.py -h`<BR/>
+ `python GDmicro_preprocess.py -h`<BR/>
  ```
  GDmicro_preprocess - Normalize all input data, merge your own test data with training data, and convert combined matrices to node feature format.
  
@@ -106,7 +106,7 @@ The `Test_datasets` and all other datasets used in the paper can be downloaded t
     -o, --outdir                  Output directory of combined and normalized results. (Default: GDmicro_merge) 
  ```
  
-  `python GDmicro.py.py -h`<BR/>
+  `python GDmicro.py -h`<BR/>
   ```
   GDmicro - Use GCN and deep adaptation network to classify disease status based on human gut microbiome data.
   
