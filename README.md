@@ -75,7 +75,7 @@ The `Test_datasets` and all other datasets used in the paper can be downloaded t
    ! Note, the complete demo commands using example datasets can be found in `run_GDmicro_demo.sh`
   
 ### Use GDmicro to classify disease status for input samples.<BR/>
-   2.1. Apply GDmicro to predict the health status of your test samples.<BR/>
+   2.1. Apply GDmicro to classify the disease status of your test samples.<BR/>
    
    `python GDmicro.py -i <Input_dir> -d <disease> -o <Outputdir>`<BR/>
    
