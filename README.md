@@ -121,6 +121,7 @@ The `Test_datasets` and all other datasets used in the paper can be downloaded t
     -s, --randomseed              The random seed. (default: not use)
     -a, --domain_adapt            Whether apply domain adaptation to the test dataset. If set to 0, then will use cross-entropy loss rather than domain adaptation loss. (default: use).
     -r, --reverse                 If set to 1, then will use functional data as node features, and compostitional data to build edges. (default: 0)
+    -v, --vnode                   If set to 1, then will apply domain adaptation network to node features, and use embedding vectors as nodes.. (default: 0)
     -o, --outdir                  Output directory of test results. (Default: GDmicro_res).
   ```
   
