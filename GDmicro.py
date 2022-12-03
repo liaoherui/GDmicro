@@ -8,6 +8,7 @@ import scipy.sparse as sp
 from sklearn.model_selection import StratifiedKFold
 import run_GCN_train_mode
 import run_MLP_embedding_da
+import run_MLP_embedding_da_for_node
 import run_MLP_embedding
 from gcn_model import encode_onehot,GCN,train,test,test_unknown,normalize,sparse_mx_to_torch_sparse_tensor
 from calculate_avg_acc_of_cross_validation_test import cal_acc_cv
@@ -417,7 +418,7 @@ def load_dcs(infile,dcs):
         dcs[cs]=ele[0]
         cs+=1
 
-def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse):
+def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse,vnode):
     if not rseed==0:
         setup_seed(rseed)
     # Load species name -> for feature importance
@@ -434,8 +435,12 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         ele=line.split('\t')
         dcs[cs]=ele[0]
         cs+=1
-    '''
     
+    if vnode==0:
+        idx_features_labels = np.genfromtxt("{}".format(input_fs),dtype=np.dtype(str))
+    else:
+        new_fs=run_MLP_embedding_da_for_node.
+    '''
     idx_features_labels = np.genfromtxt("{}".format(input_fs),dtype=np.dtype(str))
     features=idx_features_labels[:, 1:-1]
     features=features.astype(float)
@@ -523,7 +528,8 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
             features=idx_features_labels[:, 1:-1]
             features=features.astype(float)
             features=np.array(features)
-            os.system('rm '+otem)
+            if vnode==0:
+                os.system('rm '+otem)
             dcs={}
             load_dcs(eg_fs_sf,dcs)
 
@@ -548,12 +554,29 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
                 graph=run_MLP_embedding.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
             else:
                 graph=run_MLP_embedding.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
+
         #exit()
+        
 
         # Train and testing 
         labels,classes_dict=encode_onehot(labels_raw)
+        
+        if vnode==0:
+            features = sp.csr_matrix(features, dtype=np.float32)
+        else:
+            if reverse==0:
+                embd_vector=run_MLP_embedding_da_for_node.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,input_fs)
 
-        features = sp.csr_matrix(features, dtype=np.float32)
+            else:
+                embd_vector=run_MLP_embedding_da_for_node.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,otem)
+                os.system('rm '+otem)
+            idx_features_labels = np.genfromtxt("{}".format(embd_vector),dtype=np.dtype(str))
+            features=idx_features_labels[:, 1:-1]
+            features=features.astype(float)
+            features=np.array(features)
+            features = sp.csr_matrix(features, dtype=np.float32)
+
+
         features=torch.FloatTensor(np.array(features.todense()))
         labels = torch.LongTensor(np.where(labels)[1])
 
@@ -594,16 +617,16 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
                         test_unknown(model,test_idx,features,adj,rdir,fn+1,classes_dict,tid2name,1)
         
         ##### Feature importance
-        
-        selected={}
-        selected_arr=[]
-        o3=open(rdir+'/feature_importance_fold'+str(fn+1)+'.txt','w+')
-        #o4=open(rdir+'/feature_importance_iterative_fold'+str(fn+1)+'.txt','w+')
-        uid=uuid.uuid1().hex
-        ot=open(uid+'.log','w+')
-        feature_importance_check(selected,selected_arr,feature_id,train_idx,val_idx,test_idx,features,adj,labels,rdir,fn,classes_dict,tid2name,o3,wwl,ot,dcs,fnum,close_cv)
-        ot.close()
-        os.system('rm '+uid+'.log')
+        if vnode==0: 
+            selected={}
+            selected_arr=[]
+            o3=open(rdir+'/feature_importance_fold'+str(fn+1)+'.txt','w+')
+            #o4=open(rdir+'/feature_importance_iterative_fold'+str(fn+1)+'.txt','w+')
+            uid=uuid.uuid1().hex
+            ot=open(uid+'.log','w+')
+            feature_importance_check(selected,selected_arr,feature_id,train_idx,val_idx,test_idx,features,adj,labels,rdir,fn,classes_dict,tid2name,o3,wwl,ot,dcs,fnum,close_cv)
+            ot.close()
+            os.system('rm '+uid+'.log')
         
 
         ##### Node importance
@@ -722,6 +745,7 @@ def main():
     parser.add_argument('-s','--randomseed',dest='rseed',type=str,help="The random seed used to reproduce the result.  (default: not use)")
     parser.add_argument('-a','--domain_adapt',dest='doadpt',type=str,help="Whether apply domain adaptation to the test dataset. If set to 0, then will use MLP rather than domain adaptation. (default: use)")
     parser.add_argument('-r','--reverse',dest='reverse',type=str,help="If set to 1, then will use functional data as node features, and compostitional data to build edges. (default: 0)")
+    parser.add_argument('-v','--embed_vector_node',dest='vnode',type=str,help="If set to 1, then will apply domain adaptation network to node features, and use embedding vectors as nodes.. (default: 0)")
 
     parser.add_argument('-o','--outdir',dest='outdir',type=str,help="Output directory of test results. (Default: GDmicro_res)")
 
@@ -741,6 +765,7 @@ def main():
     #fuse=args.fuse
     cvfold=args.cvfold
     reverse=args.reverse
+    vnode=args.vnode
     rseed=args.rseed
     doadpt=args.doadpt
 
@@ -757,6 +782,10 @@ def main():
         reverse=0
     else:
         reverse=int(reverse)
+    if not vnode:
+        vnode=0
+    else:
+        vnode=int(vnode)
     if not anode:
         anode=0
     else:
@@ -798,7 +827,7 @@ def main():
     
     if train_mode==0:
         input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features=scan_input(indir,disease)
-        run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse)
+        run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse,vnode)
     else:
         input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features=scan_input_train_mode(indir,disease)
         run_GCN_train_mode.run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode,reverse)
