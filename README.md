@@ -7,7 +7,7 @@ You can use GDmicro to:
  2. Explore disease-related species (potential biomarkers).
  3. Explore the sample relationship of your metagenomic samples through the knn graph constructed by GDmicro.
 
-Workflow: To remove domain discrepency between training and test data, deep adaptation network will be used to learn the latent features from input eggNOG abundance data. Then, we will build a host-host microbiome similarity graph based on these robust latent features, where node features are represented by species abundance features.  Finally, GCN will take this graph as input and classify labels for test samples. <!---The overview of GDmicro is show below.-->
+Workflow: To remove domain discrepency between training and test data, deep adaptation network will be used to learn the latent features from input eggNOG abundance data. Then, we will build a inter-host microbiome similarity graph based on these robust latent features, where node features are represented by species abundance features.  Finally, GCN will take this graph as input and classify labels for test samples. <!---The overview of GDmicro is show below.-->
 
 
 <!---
