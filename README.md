@@ -42,7 +42,7 @@ To use GDmicro, you are supposed to put all your input training and test data in
 
 The `Test_datasets` and all other datasets used in the paper can be downloaded through [here](https://drive.google.com/drive/u/0/folders/1Ud-cXOMBc67h1NEYtPXmkbQf8B7cQgSC).
 
- For both training and predicting, the data mainly consists of three files: (1)eggNOG abundance matrix file; (2)species abundance matrix file; (3)metadata file
+ For both training and predicting, the input data mainly consists of three files: (1)eggNOG abundance matrix file; (2)species abundance matrix file; (3)metadata file
  ```
  Test_datasets
 |-Input_train/
