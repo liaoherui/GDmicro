@@ -39,7 +39,7 @@ If you have installed GDmicro. Then you can reproduce the results in the paper u
 
 ## Usage
 ### Instruction about input data.<BR/>
-To use GDmicro, you are supposed to put all your input training and test data in two folders (e.g. `<Input_train_dir>` and `<Input_test_dir>`). Here, we give an example (two folders named  `Test_datasets/Input_train`, `Test_datasets/Input_test`) about the input data format for users' reference.
+To use GDmicro, you are expected to provide microbioal species abundance matrix as input. One example is given below.
 
 
 
@@ -49,6 +49,7 @@ To use GDmicro, you are supposed to put all your input training and test data in
    
    `python GDmicro.py -i <Input_file> -d <disease> -o <Outputdir>`<BR/>
    
+   (Node: <disease> refers to the name of disease in the column "disease" of input matrix. For example, `-d CRC`, `-d IBD`, `-d T2D`, etc. )
     
    1.2. Apply GDmicro to do the k-fold cross-validation on your training samples. (Under training mode)<BR/> 
 
