@@ -33,7 +33,11 @@ Yon can install GDmicro via [Anaconda](https://anaconda.org/) using the commands
 `python GDmicro.py -h`<BR/>
 
 
-If you have installed GDmicro. Then you can reproduce the results in the paper using the command below. (Note: all LOSO experiment is given the random seed = 10 (`-s 10`) to make sure the reproducibility of results)
+If you have installed GDmicro. Then you can run the commands below to test the program.
+`python GDmicro.py -i Input_files/CRC_10fold.csv -t 1  -d CRC -o GDmicro_Res/CRC_10fold`
+`python GDmicro.py -i Input_files/CRC_FRA_LOSO.csv  -s 10 -d CRC -o GDmicro_Res/CRC_FRA_LOSO`
+
+You can also reproduce all the results in the paper using the command below. (Note: all LOSO experiment is given the random seed = 10 (`-s 10`) to make sure the reproducibility of results)
 
 `sh run_GDmicro_demo.sh`<BR/>
 
