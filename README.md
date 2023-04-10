@@ -33,7 +33,7 @@ Yon can install GDmicro via [Anaconda](https://anaconda.org/) using the commands
 `python GDmicro.py -h`<BR/>
 
 
-If you have installed GDmicro. Then you can reproduce the experiments in the paper using the command below. (Note: all LOSO experiment is given the random seed = 10 to make sure the reproducibility of results)
+If you have installed GDmicro. Then you can reproduce the experiments in the paper using the command below. (Note: all LOSO experiment is given the random seed = 10 (`-s 10`) to make sure the reproducibility of results)
 
 `sh run_GDmicro_demo.sh`<BR/>
 
