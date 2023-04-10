@@ -39,11 +39,19 @@ If you have installed GDmicro. Then you can reproduce the results in the paper u
 
 ## Usage
 ### Instruction about input data.<BR/>
-To use GDmicro, you are expected to provide microbioal species abundance matrix as input. One example is given below.
+To use GDmicro, you are expected to provide microbioal species abundance matrix (csv format) as input. One example is given below.
 
-
-
+  | subject_id       | class        | disease       | study      | Acidaminococcus_intestini  | ...     |
+  |--------------|--------------|--------------|------------|------------|------------|
+  | S1_a_WGS | train | IBD  | GBR  |0.0  |...   |
+  | S101_a_WGS | train | IBD  | GBR  |0.0  |...   |
+  | S102_a_WGS | train | IBD  | GBR  |0.0  |...   |
   
+The first column refers to the sample ID, the second columns refers to the class of the sample (can be "train" or "test"), the third column refers to the disease label of the sample (can be 'healthy' or <disease> (e.g. IBD, CRC, T2D, etc)), the fourth column refers to the study or country infor of the sample, and all remaining columns refer to the species.
+
+For missing values in the "disease" or "study" column, you can replace them with "Unknown".
+
+
 ### Use GDmicro to classify disease status for input samples.<BR/>
    1.1. Apply GDmicro to classify the disease status of your test samples.<BR/>
    
