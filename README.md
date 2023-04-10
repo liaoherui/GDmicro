@@ -85,7 +85,6 @@ The default output folder is named "GDmicro_res", and output files in this folde
 
  ```
 GDmicro_res
-|-Feature_file/
 |-Graph_file/
 |-Res_file/
     |-final_predict_metrics.txt
