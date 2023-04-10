@@ -99,7 +99,6 @@ The default output folder is named "GDmicro_res", and output files in this folde
 
  ```
 GDmicro_res
-|-Graph_file/
 |-Res_file/
     |-final_predict_metrics.txt
     |-sample_prob.txt
@@ -107,10 +106,6 @@ GDmicro_res
     |-feature_importance.txt
     |-driver_sp_change.txt
 ```
-Graph_file
--------------------------
-This folder contains files used and files output in the graph construction process.
-
 final_predict_metrics.txt
 -------------------------
 This file contains the final prediction metrics including train AUC, test AUC, etc.
