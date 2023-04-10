@@ -1,13 +1,14 @@
 #  GDmicro - Use GCN and Deep adaptation network to classify host disease status based on human gut microbiome data.
 
-Input and core components:  __GDmicro takes eggNOG and species abundance data as input.__ It utilizes GCN and deep adaptation network to improve the classification performance and robustness.
+Input and core components:  __GDmicro takes species abundance data as input.__ It utilizes GCN and deep adaptation network to improve the classification performance and robustness.
 
 You can use GDmicro to:
  1. Classify disease status for your test samples (binary classification - healthy or disease). As shown in our experiments, GDmicro has good performance even training and test data are from different studies and sampled from different countries.
  2. Explore disease-related species (potential biomarkers).
- 3. Explore the sample relationship of your metagenomic samples through the knn graph constructed by GDmicro.
+ 3. Explore the biomarkers' influence on the hosts' disease status.
+ 4. Explore the sample relationship of your metagenomic samples through the knn graph constructed by GDmicro.
 
-Workflow: To remove domain discrepency between training and test data, deep adaptation network will be used to learn the latent features from input eggNOG abundance data. Then, we will build a inter-host microbiome similarity graph based on these robust latent features, where node features are represented by species abundance features.  Finally, GCN will take this graph as input and classify labels for test samples. <!---The overview of GDmicro is show below.-->
+Workflow: To remove domain discrepency between training and test data, deep adaptation network will be used to learn the latent features from input compositional abundance data. Then, we will build a inter-host microbiome similarity graph based on these robust latent features, where node features are represented by species abundance features. Finally, GCN will take this graph as input and classify labels for test samples. <!---The overview of GDmicro is show below.-->
 
 
 <!---
@@ -30,9 +31,9 @@ Yon can install GDmicro via [Anaconda](https://anaconda.org/) using the commands
 `conda activate gdmicro`<BR/>
 
 `python GDmicro.py -h`<BR/>
-`python GDmicro_preprocess.py -h`<BR/>
 
-If you have installed GDmicro and downloaded the [Test_datasets](https://drive.google.com/drive/u/0/folders/1Ud-cXOMBc67h1NEYtPXmkbQf8B7cQgSC). Then you can test GDmicro with the example datasets using the command below.
+
+If you have installed GDmicro. Then you can reproduce the experiments in the paper using the command below. (Note: all LOSO experiment is given the random seed = 10 to make sure the reproducibility of results)
 
 `sh run_GDmicro_demo.sh`<BR/>
 
@@ -40,71 +41,25 @@ If you have installed GDmicro and downloaded the [Test_datasets](https://drive.g
 ### Instruction about input data.<BR/>
 To use GDmicro, you are supposed to put all your input training and test data in two folders (e.g. `<Input_train_dir>` and `<Input_test_dir>`). Here, we give an example (two folders named  `Test_datasets/Input_train`, `Test_datasets/Input_test`) about the input data format for users' reference.
 
-The `Test_datasets` and all other datasets used in the paper can be downloaded through [here](https://drive.google.com/drive/u/0/folders/1Ud-cXOMBc67h1NEYtPXmkbQf8B7cQgSC).
-
- For both training and predicting, the input data mainly consists of three files: (1)eggNOG abundance matrix file; (2)species abundance matrix file; (3)metadata file
- ```
- Test_datasets
-|-Input_train/
-    |-IBD_eggNOG_matrix.csv
-    |-IBD_sp_matrix.csv
-    |-IBD_meta.tsv
-|-Input_test/
-    |-IBD_eggNOG_matrix.csv
-    |-IBD_sp_matrix.csv
-    |-IBD_meta.tsv
- ```
- 
-- [Data Format Details Introduction](data_format.md)
-  - [EggNOG Abundance Matrix File](data_format.md#eggNOG_File)
-  - [Species Abundance Matrix File](data_format.md#sp_File)
-  - [Metadata File](data_format.md#metadata_File)
- 
 
 
-
-### Use GDmicro_preprocess to pre-process your data.<BR/>
-   1.1. Pre-process both the training and testing data.<BR/>
-   
-  `python GDmicro_preprocess.py -i <Input_train_dir> -b <Input_test_dir> -o <Output_dir> -d <disease>`<BR/>
-  
-   1.2. If you don't have test data, pre-process training data only. In other words, all input data should have labels. (Under training mode)<BR/>
-   
-  `python GDmicro_preprocess.py -i <Input_train_dir> -t 1 -o <Output_dir> -d <disease>`<BR/>
-  
-   ! Note, the complete demo commands using example datasets can be found in `run_GDmicro_demo.sh`
   
 ### Use GDmicro to classify disease status for input samples.<BR/>
-   2.1. Apply GDmicro to classify the disease status of your test samples.<BR/>
+   1.1. Apply GDmicro to classify the disease status of your test samples.<BR/>
    
-   `python GDmicro.py -i <Input_dir> -d <disease> -o <Outputdir>`<BR/>
+   `python GDmicro.py -i <Input_file> -d <disease> -o <Outputdir>`<BR/>
    
-   Note: the `<Input_dir>` should be the `<Output_dir>` of 1.1.<BR/>
     
-   2.2. Apply GDmicro to do the k-fold cross-validation on your training samples. (Under training mode)<BR/> 
+   1.2. Apply GDmicro to do the k-fold cross-validation on your training samples. (Under training mode)<BR/> 
 
-   `python GDmicro.py -i <Input_dir> -d <disease> -t 1 -o <Outputdir>`<BR/>
+   `python GDmicro.py -i <Input_file> -d <disease> -t 1 -o <Outputdir>`<BR/>
    
-   Note: the `<Input_dir>` should be the `<Output_dir>` of 1.2.<BR/> 
    
    ! Note, the complete demo commands using example datasets can be found in `run_GDmicro_demo.sh`
  
    
 
 ### Full command-line options
-
- `python GDmicro_preprocess.py -h`<BR/>
- ```
- GDmicro_preprocess - Normalize all input data, merge your own test data with training data, and convert combined matrices to node feature format.
- 
- optional arguments:
-    -h, --help                    Show help message and exit.
-    -i, --input_train             The dir of input training data.
-    -b, --input_test              The dir of input test data.
-    -t, --train_mode              If set to 1, then will only normalize and convert all input data. This mode can only be used when input datasets are all training data. You don't need to provide the test data under this mode. (default: 0)
-    -d, --disease                 The name of disease. (Note: the value should be the same as the one in your metadata file.)
-    -o, --outdir                  Output directory of combined and normalized results. (Default: GDmicro_merge) 
- ```
  
   `python GDmicro.py -h`<BR/>
   ```
