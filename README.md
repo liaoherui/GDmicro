@@ -33,7 +33,7 @@ Yon can install GDmicro via [Anaconda](https://anaconda.org/) using the commands
 `python GDmicro.py -h`<BR/>
 
 
-If you have installed GDmicro. Then you can run the commands below to test the program.
+If you have installed GDmicro. Then you can run the commands below to test the program.<BR/>
 `python GDmicro.py -i Input_files/CRC_10fold.csv -t 1 -d CRC -o GDmicro_Res/CRC_10fold`<BR/>
 `python GDmicro.py -i Input_files/CRC_FRA_LOSO.csv -s 10 -d CRC -o GDmicro_Res/CRC_FRA_LOSO`
 
