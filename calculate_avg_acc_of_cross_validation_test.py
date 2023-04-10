@@ -102,22 +102,17 @@ def cal_acc_cv(infile,ofile):
         o.write('The best test AUC of Fold '+str(i)+' is '+str(dtestum[i])+'\n')
         #o.write('The best test acc of Fold '+str(i)+' is '+str(dtest_acc[i])+'\n')
         #o.write('The best test AUC of Fold '+str(i)+' is '+str(dtest_auc[i])+'\n')
-        
-        #print('The average train acc of Fold ',i,' is ',np.mean(dtrain[i]))
-        #print('The average train AUC of Fold ',i,' is ',np.mean(dtrainu[i]))
+        ''' 
         print('The best train acc of Fold '+str(i)+' is '+str(dtrainm[i])+'\n')
         print('The best train AUC of Fold '+str(i)+' is '+str(dtrainum[i])+'\n')
 
-        #print('The average val acc of Fold ',i,' is ',np.mean(dval[i]))
-        #print('The average val AUC of Fold ',i,' is ',np.mean(dvalu[i]))
         print('The best val acc of Fold '+str(i)+' is '+str(dvalm[i])+'\n')
         print('The best val AUC of Fold '+str(i)+' is '+str(dvalum[i])+'\n')
 
         print('The best test acc of Fold '+str(i)+' is '+str(dtestm[i])+'\n')
         print('The best test AUC of Fold '+str(i)+' is '+str(dtestum[i])+'\n')
+        '''
 
-        #print('The best test acc of Fold '+str(i)+' is '+str(dtest_acc[i])+'\n')
-        #print('The best test AUC of Fold '+str(i)+' is '+str(dtest_auc[i])+'\n')
 
 
 
@@ -161,15 +156,14 @@ def cal_acc_cv(infile,ofile):
 
     #o.write('Final: The average test acc is '+str(np.mean(bt_tacc))+'\n')
     #o.write('Final: The average test AUC is '+str(np.mean(bt_tauc))+'\n')
-
+    '''
     print('The average train acc is ',np.mean(bt_train))
     print('The average train AUC is ',np.mean(bt_trainu))
     print('The average val acc is ',np.mean(bt_val))
     print('The average val AUC is ',np.mean(bt_valu))
     print('The average test acc is ',np.mean(bt_test))
     print('The average test AUC is ',np.mean(bt_testu))
-    #print('The average test acc is ',np.mean(bt_tacc))
-    #print('The average test AUC is ',np.mean(bt_tauc))
+    '''
 
 #cal_acc_cv('test.o')
 #cal_acc_cv('CRC_41_GCN/FRA/Res_File/r1.txt','CRC_41_GCN/FRA/Res_File/r2.txt')

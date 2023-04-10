@@ -863,8 +863,6 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         #print(train_idx)
         #exit()
         #o3=open(rdir+'/sample_prob_fold'+str(fn+1)+'.txt','w+')
-        o1.write('Fold {}'.format(fn+1)+'\n')
-        print('Fold {}'.format(fn+1)+', Train:'+str(len(train_idx))+' Test:'+str(len(val_idx)))
         # Select features using lasso
         
         # Select features using lasso
