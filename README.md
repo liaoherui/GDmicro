@@ -76,16 +76,16 @@ For missing values in the "disease" or "study" column, you can replace them with
   
   optional arguments:
     -h, --help                    Show help message and exit.
-    -i, --input_dir               The directory of all input datasets. Should be the output of GDmicro_preprocess.
+    -i, --input_dir               The directory of input csv file.
     -t, --train_mode              If set to 1, then will apply k-fold cross validation to all input datasets. This mode can only be used when input datasets are all training data. The input data should be the output of the train mode of GDmicro_preprocess. (default: 0)
     -d, --disease                 The name of disease.
     -k, --kneighbor               The number of neighborhoods in the knn graph. (default: 5)
     -e, --apply_node              If set to 1, then will apply node importance calculation, which may take a long time. (default: not use).
+    -f, --feature_num             How many features (top x features) will be analyzed during the feature influence score calculation process. (default: x=10)
     -c, --cvfold                  The value of k in k-fold cross validation. (default: 10).
     -s, --randomseed              The random seed. (default: not use)
     -a, --domain_adapt            Whether apply domain adaptation to the test dataset. If set to 0, then will use cross-entropy loss rather than domain adaptation loss. (default: use).
     -r, --reverse                 If set to 1, then will use functional data as node features, and compostitional data to build edges. (default: 0)
-    -v, --vnode                   If set to 1, then will apply domain adaptation network to node features, and use learned latent features as node features. (default: 0)
     -o, --outdir                  Output directory of test results. (Default: GDmicro_res).
   ```
   
