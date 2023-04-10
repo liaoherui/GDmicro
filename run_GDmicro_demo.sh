@@ -18,3 +18,7 @@ python GDmicro.py -i Input_files/CRC_CHI_LOSO.csv -s 10  -d CRC -o GDmicro_new_p
 python GDmicro.py -i Input_files/CRC_USA_LOSO.csv -s 10  -d CRC -o GDmicro_new_pipe/CRC_USA_LOSO
 
 python GDmicro.py -i Input_files/CRC_AUS_LOSO.csv -s 10  -d CRC -o GDmicro_new_pipe/CRC_AUS_LOSO
+
+python GDmicro.py -i Input_files/IBD_UK_LOSO.csv -s 10  -d IBD -o GDmicro_new_pipe/IBD_UK_LOSO
+
+python GDmicro.py -i Input_files/IBD_DK_LOSO.csv -s 10  -d IBD -o GDmicro_new_pipe/IBD_DK_LOSO
