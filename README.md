@@ -57,7 +57,7 @@ For missing values in the "disease" or "study" column, you can replace them with
    
    `python GDmicro.py -i <Input_file> -d <disease> -o <Outputdir>`<BR/>
    
-   (Node: <disease> refers to the name of disease in the column "disease" of input matrix. For example, `-d CRC`, `-d IBD`, `-d T2D`, etc. )
+   (Note: `<disease>` refers to the name of disease in the column "disease" of input matrix. For example, `-d CRC`, `-d IBD`, `-d T2D`, etc. )
     
    1.2. Apply GDmicro to do the k-fold cross-validation on your training samples. (Under training mode)<BR/> 
 
