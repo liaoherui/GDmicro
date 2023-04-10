@@ -47,7 +47,7 @@ To use GDmicro, you are expected to provide microbioal species abundance matrix 
   | S101_a_WGS | train | IBD  | GBR  |0.0  |...   |
   | S102_a_WGS | train | IBD  | GBR  |0.0  |...   |
   
-The first column refers to the sample ID, the second columns refers to the class of the sample (can be "train" or "test"), the third column refers to the disease label of the sample (can be 'healthy' or <disease> (e.g. IBD, CRC, T2D, etc)), the fourth column refers to the study or country infor of the sample, and all remaining columns refer to the species.
+The first column refers to the sample ID, the second columns refers to the class of the sample (can be "train" or "test"), the third column refers to the disease label of the sample (can be 'healthy' or `<disease>` (e.g. IBD, CRC, T2D, etc)), the fourth column refers to the study or country infor of the sample, and all remaining columns refer to the species.
 
 For missing values in the "disease" or "study" column, you can replace them with "Unknown".
 
