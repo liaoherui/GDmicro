@@ -236,7 +236,30 @@ def AUC(output,labels):
     #exit()
     return auc
 
+def train_fs(epoch,idx_train_in,idx_val_in,model,optimizer,features,adj,labels,o,max_val_auc,rdir,fold,classes_dict,tid2name,record):
+    #model.to(device).super().reset_parameters()
+    #model = GCN(nfeat=features.shape[1], nhid=hidden, nclass=labels.max().item() + 1, dropout=dropout)
+    #optimizer = torch.optim.Adam(model.parameters(),lr=lr, weight_decay=weight_decay)
+    t=time.time()
+    model.train()
+    optimizer.zero_grad()
+    output=model(features,adj)
+    loss_train=torch.nn.functional.nll_loss(output[idx_train_in], labels[idx_train_in])
+    acc_train = accuracy(output[idx_train_in], labels[idx_train_in])
+    auc_train=AUC(output[idx_train_in], labels[idx_train_in])
+    loss_train.backward()
+    optimizer.step()
 
+    #if not fastmode:
+    model.eval()
+    output=model(features,adj)
+    loss_val = torch.nn.functional.nll_loss(output[idx_val_in], labels[idx_val_in])
+    acc_val = accuracy(output[idx_val_in], labels[idx_val_in])
+    auc_val = AUC(output[idx_val_in], labels[idx_val_in])
+    print('Epoch: {:04d}'.format(epoch+1),'loss_train: {:.4f}'.format(loss_train.item()),'acc_train: {:.4f}'.format(acc_train.item()),'loss_val: {:.4f}'.format(loss_val.item()),'acc_val: {:.4f}'.format(acc_val.item()),'time: {:.4f}s'.format(time.time() - t),'AUC_train: {:.4f}'.format(auc_train.item()),'AUC_val: {:.4f}'.format(auc_val.item()))
+    o.write('Epoch: {:04d}'.format(epoch+1)+' loss_train: {:.4f}'.format(loss_train.item())+' acc_train: {:.4f}'.format(acc_train.item())+' loss_val: {:.4f}'.format(loss_val.item())+' acc_val: {:.4f}'.format(acc_val.item())+' time: {:.4f}s'.format(time.time() - t)+' AUC_train: {:.4f}'.format(auc_train.item())+' AUC_val: {:.4f}'.format(auc_val.item())+'\n')
+    
+    return auc_train,torch.exp(output).data.numpy()
 
 def train(epoch,idx_train_in,idx_val_in,model,optimizer,features,adj,labels,o,max_val_auc,rdir,fold,classes_dict,tid2name,record):
     #model.to(device).super().reset_parameters()

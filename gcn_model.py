@@ -250,8 +250,6 @@ def AUC(output,labels):
     #exit()
     return auc
 
-
-
 def train(epoch,idx_train_in,idx_val_in,model,optimizer,features,adj,labels,o,max_val_auc,rdir,fold,classes_dict,tid2name,wwl,record,close_cv):
     #model.to(device).super().reset_parameters()
     #model = GCN(nfeat=features.shape[1], nhid=hidden, nclass=labels.max().item() + 1, dropout=dropout)
@@ -305,6 +303,60 @@ def train(epoch,idx_train_in,idx_val_in,model,optimizer,features,adj,labels,o,ma
         else:
             o.write('Epoch: {:04d}'.format(epoch+1)+' loss_train: {:.4f}'.format(loss_train.item())+' acc_train: {:.4f}'.format(acc_train.item())+' AUC_train: {:.4f}'.format(auc_train.item())+'\n')
         return auc_train
+
+def train_fs(epoch,idx_train_in,idx_val_in,model,optimizer,features,adj,labels,o,max_val_auc,rdir,fold,classes_dict,tid2name,wwl,record,close_cv):
+    #model.to(device).super().reset_parameters()
+    #model = GCN(nfeat=features.shape[1], nhid=hidden, nclass=labels.max().item() + 1, dropout=dropout)
+    #optimizer = torch.optim.Adam(model.parameters(),lr=lr, weight_decay=weight_decay)
+    t=time.time()
+    model.train()
+    optimizer.zero_grad()
+    output=model(features,adj)
+    loss_train=torch.nn.functional.nll_loss(output[idx_train_in], labels[idx_train_in])
+    acc_train = accuracy(output[idx_train_in], labels[idx_train_in])
+    auc_train=AUC(output[idx_train_in], labels[idx_train_in])
+    loss_train.backward()
+    optimizer.step()
+
+    #if not fastmode:
+    model.eval()
+    output=model(features,adj)
+    #loss_val = torch.nn.functional.nll_loss(output[idx_val_in], labels[idx_val_in])
+    if close_cv==0:
+            loss_val = torch.nn.functional.nll_loss(output[idx_val_in], labels[idx_val_in])
+            acc_val = accuracy(output[idx_val_in], labels[idx_val_in])
+            auc_val = AUC(output[idx_val_in], labels[idx_val_in])
+    if close_cv==0:
+        print('Epoch: {:04d}'.format(epoch+1),'loss_train: {:.4f}'.format(loss_train.item()),'acc_train: {:.4f}'.format(acc_train.item()),'loss_val: {:.4f}'.format(loss_val.item()),'acc_val: {:.4f}'.format(acc_val.item()),'time: {:.4f}s'.format(time.time() - t),'AUC_train: {:.4f}'.format(auc_train.item()),'AUC_val: {:.4f}'.format(auc_val.item()))
+
+        if wwl==1:
+            o.write('Epoch: {:04d}'.format(epoch+1)+' loss_train: {:.4f}'.format(loss_train.item())+' acc_train: {:.4f}'.format(acc_train.item())+' loss_val: {:.4f}'.format(loss_val.item())+' acc_val: {:.4f}'.format(acc_val.item())+' time: {:.4f}s'.format(time.time() - t)+' AUC_train: {:.4f}'.format(auc_train.item())+' AUC_val: {:.4f}'.format(auc_val.item())+'')
+        else:
+            o.write('Epoch: {:04d}'.format(epoch+1)+' loss_train: {:.4f}'.format(loss_train.item())+' acc_train: {:.4f}'.format(acc_train.item())+' loss_val: {:.4f}'.format(loss_val.item())+' acc_val: {:.4f}'.format(acc_val.item())+' time: {:.4f}s'.format(time.time() - t)+' AUC_train: {:.4f}'.format(auc_train.item())+' AUC_val: {:.4f}'.format(auc_val.item())+'\n')
+        if auc_val>max_val_auc and record==1:
+            o3=open(rdir+'/sample_prob_fold'+str(fold)+'_val.txt','w+')
+            output_res=torch.exp(output[idx_val_in])
+            output_res=output_res.data.numpy()
+            c=0
+            dt={}
+            for n in classes_dict:
+                if n=="Unknown":continue
+                if int(classes_dict[n][0])==1:
+                    dt[0]=n
+                else:
+                    dt[1]=n
+            for a in output_res:
+                nt=labels[idx_val_in[c]].data.numpy()
+                o3.write(tid2name[int(idx_val_in[c])]+'\t'+str(a[0])+'\t'+str(a[1])+'\t'+str(labels[idx_val_in[c]].data.numpy())+'\t'+str(dt[int(nt)])+'\n')
+                c+=1
+        return auc_train,torch.exp(output).data.numpy()
+    else:
+        print('Epoch: {:04d}'.format(epoch+1),'loss_train: {:.4f}'.format(loss_train.item()),'acc_train: {:.4f}'.format(acc_train.item()))
+        if wwl==1:
+            o.write('Epoch: {:04d}'.format(epoch+1)+' loss_train: {:.4f}'.format(loss_train.item())+' acc_train: {:.4f}'.format(acc_train.item())+' AUC_train: {:.4f}'.format(auc_train.item())+'')
+        else:
+            o.write('Epoch: {:04d}'.format(epoch+1)+' loss_train: {:.4f}'.format(loss_train.item())+' acc_train: {:.4f}'.format(acc_train.item())+' AUC_train: {:.4f}'.format(auc_train.item())+'\n')
+        return auc_train,torch.exp(output).data.numpy()
         #if auc_train>max_val_auc and record==1:
 
 

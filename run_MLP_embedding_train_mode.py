@@ -12,10 +12,11 @@ import os
 import merge_embedding_vector_train_mode
 import build_graph_with_embedding_train_mode
 import random
+from copy import deepcopy
 
 def setup_seed(seed):
     torch.manual_seed(seed)
-    torch.cuda.mannual_seed_all(seed)
+    torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     random.seed(seed)
     torch.backends.cudnn.deterministic=True
@@ -137,15 +138,18 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,kneighbo
         dataset=train_data_nots,
         batch_size=64,
         shuffle=True,
-        num_workers=1,
+        num_workers=0,
     )
     max_test_acc=0
     max_test_auc=0
     for i in range(10):
 
-        mlpc=MLPclassifica(nfeat=X_train.shape[1])
+        best_auc=0
+        #thresh=0.6
 
-        optimizer=torch.optim.Adam(mlpc.parameters(),lr=0.01,weight_decay=1e-5)
+        mlpc_raw=MLPclassifica(nfeat=X_train.shape[1])
+
+        optimizer=torch.optim.Adam(mlpc_raw.parameters(),lr=0.01,weight_decay=1e-5)
         loss_func=nn.CrossEntropyLoss()
 
         history1=hl.History()
@@ -155,7 +159,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,kneighbo
 
         for epoch in range(50):
             for step, (b_x, b_y) in enumerate(train_nots_loader):
-                _,_,output=mlpc(b_x)
+                _,_,output=mlpc_raw(b_x)
                 train_loss=loss_func(output,b_y)
                 optimizer.zero_grad()
                 train_loss.backward()
@@ -164,8 +168,17 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,kneighbo
 
                 #feature_output=mlpc.featuremap.cpu()
                 #feature_out=np.array(feature_output)
+                _,_,output=mlpc_raw(X_val_nots)
+                val_auc=AUC(output,y_val_t)
+                _,pre_lab=torch.max(output,1)
+                val_accuracy=accuracy_score(y_val_t,pre_lab)
+
+                if float(val_auc)>float(best_auc):
+                    best_auc=float(val_auc)
+                    mlpc=deepcopy(mlpc_raw)
+
                 if niter%print_step==0:
-                    _,_,output=mlpc(X_val_nots)
+                    #_,_,output=mlpc(X_val_nots)
                     _,pre_lab=torch.max(output,1)
                     val_accuracy=accuracy_score(y_val_t,pre_lab)
                     val_auc=AUC(output,y_val_t)
@@ -209,13 +222,13 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,kneighbo
         print("test_accuracy:",test_accuracy,"test_AUC:",test_auc)
         '''
         o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nVal accuracy: "+str(val_accuracy)+" Val AUC: "+str(val_auc)+'\n')
-        if val_accuracy>max_test_acc:
-            max_test_acc=val_accuracy
+        if val_auc>max_test_auc:
             max_test_auc=val_auc
+            max_test_acc=val_accuracy
             np.savetxt(ofile1,feature_out)
             np.savetxt(ofile2,feature_out_val)
             #np.savetxt(ofile3,feature_out_test)
-        if val_accuracy==max_test_acc and val_auc>max_test_auc:
+        if val_auc==max_test_auc and val_accuracy>max_test_acc:
             max_test_acc=val_accuracy
             max_test_auc=val_auc
             np.savetxt(ofile1,feature_out)

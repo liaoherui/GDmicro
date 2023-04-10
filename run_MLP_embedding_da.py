@@ -14,6 +14,7 @@ import build_graph_with_embedding
 import mmd
 import math
 import random
+from copy import deepcopy
 
 def setup_seed(seed):
     torch.manual_seed(seed)
@@ -158,21 +159,21 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
         dataset=train_data_nots,
         batch_size=64,
         shuffle=True,
-        num_workers=1,
+        num_workers=0,
         drop_last=True,
     )
     test_nots_loader_train=Data.DataLoader(
         dataset=test_data_nots,
         batch_size=64,
         shuffle=True,
-        num_workers=1,
+        num_workers=0,
         drop_last=True,
     )
     test_nots_loader_test=Data.DataLoader(
         dataset=test_data_nots,
         batch_size=64,
         shuffle=True,
-        num_workers=1,
+        num_workers=0,
         drop_last=True,
     )
     max_val_acc=0
@@ -182,10 +183,11 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
     max_test_acc=0
     max_test_auc=0
     for i in range(10):
+        best_auc=0
 
-        model=MLPclassifica(nfeat=X_train.shape[1])
+        model_raw=MLPclassifica(nfeat=X_train.shape[1])
 
-        optimizer=torch.optim.Adam(model.parameters(),lr=0.01,weight_decay=1e-5)
+        optimizer=torch.optim.Adam(model_raw.parameters(),lr=0.01,weight_decay=1e-5)
         loss_func=nn.CrossEntropyLoss()
 
         history1=hl.History()
@@ -196,7 +198,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
         tgt_iter=iter(test_nots_loader_train)
 
         for epoch in range(1,100+1):
-            model.train()
+            model_raw.train()
 
             try:
                 src_data,src_label=src_iter.next()
@@ -211,7 +213,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
            
             #print(tgt_data.shape)
             optimizer.zero_grad()
-            src_pred,mmd_loss=model(src_data,tgt_data)
+            src_pred,mmd_loss=model_raw(src_data,tgt_data)
             #print(mmd_loss)
             #exit()
             cls_loss=loss_func(src_pred,src_label)
@@ -226,15 +228,25 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
             train_acc=accuracy(src_pred,src_label)
             #print(train_acc)
             #exit()
+            if wwl==1:
+                model_raw.eval()
+                out, ml = model_raw(X_test_nots, tgt_data)
+                test_auc=AUC(out,y_test_t)
             if epoch % 10 ==0 and close_cv==0:
-                model.eval()
-
-                out,ml=model(X_val_nots,tgt_data)
+                #model.eval()
+                out,ml=model_raw(X_val_nots,tgt_data)
                 val_acc=accuracy(out,y_val_t)
                 print('Train iter: {} [({:.0f}%)]\tLoss: {:.6f}\tsoft_Loss: {:.6f}\tmmd_Loss: {:.6f}\tTrain_accuracy:'.format(epoch, 100. * epoch / 100, loss.item(), cls_loss.item(), mmd_loss.item()),train_acc)
                 print('Validation_accuracy:',val_acc)
-        else:
-            print('Train iter: {} [({:.0f}%)]\tLoss: {:.6f}\tsoft_Loss: {:.6f}\tmmd_Loss: {:.6f}\tTrain_accuracy:'.format(epoch, 100. * epoch / 100, loss.item(), cls_loss.item(), mmd_loss.item()),train_acc)
+            elif epoch % 10 ==0:
+                print('Train iter: {} [({:.0f}%)]\tLoss: {:.6f}\tsoft_Loss: {:.6f}\tmmd_Loss: {:.6f}\tTrain_accuracy:'.format(epoch, 100. * epoch / 100, loss.item(), cls_loss.item(), mmd_loss.item()),train_acc)
+
+            if wwl==1:
+                if float(test_auc)>float(best_auc):
+                    best_auc=float(test_auc)
+                    model=deepcopy(model_raw)
+            else:
+                model=deepcopy(model_raw)
 
                 
 

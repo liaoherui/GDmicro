@@ -12,6 +12,7 @@ import os
 import merge_embedding_vector
 import build_graph_with_embedding
 import random
+from copy import deepcopy
 
 def setup_seed(seed):
     torch.manual_seed(seed)
@@ -143,7 +144,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
         dataset=train_data_nots,
         batch_size=64,
         shuffle=True,
-        num_workers=1,
+        num_workers=0,
     )
     max_val_acc=0
     max_val_auc=0
@@ -153,9 +154,11 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
     max_test_auc=0
     for i in range(10):
 
-        mlpc=MLPclassifica(nfeat=X_train.shape[1])
+        best_auc=0
 
-        optimizer=torch.optim.Adam(mlpc.parameters(),lr=0.01,weight_decay=1e-5)
+        mlpc_raw=MLPclassifica(nfeat=X_train.shape[1])
+
+        optimizer=torch.optim.Adam(mlpc_raw.parameters(),lr=0.01,weight_decay=1e-5)
         loss_func=nn.CrossEntropyLoss()
 
         history1=hl.History()
@@ -165,7 +168,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
 
         for epoch in range(50):
             for step, (b_x, b_y) in enumerate(train_nots_loader):
-                _,_,output=mlpc(b_x)
+                _,_,output=mlpc_raw(b_x)
                 train_loss=loss_func(output,b_y)
                 optimizer.zero_grad()
                 train_loss.backward()
@@ -174,8 +177,14 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
 
                 #feature_output=mlpc.featuremap.cpu()
                 #feature_out=np.array(feature_output)
+                _,_,output=mlpc_raw(X_val_nots)
+                val_auc=AUC(output,y_val_t)
+                if float(val_auc)>float(best_auc):
+                    best_auc=float(val_auc)
+                    mlpc=deepcopy(mlpc_raw)
+
                 if niter%print_step==0 and close_cv==0:
-                    _,_,output=mlpc(X_val_nots)
+                    #_,_,output=mlpc_raw(X_val_nots)
                     _,pre_lab=torch.max(output,1)
                     val_accuracy=accuracy_score(y_val_t,pre_lab)
                     val_auc=AUC(output,y_val_t)
