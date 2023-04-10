@@ -98,10 +98,10 @@ GDmicro_res
 |-Graph_file/
 |-Res_file/
     |-final_predict_metrics.txt
-    |-driver_sp_change.txt
     |-sample_prob.txt
     |-sample_kneighbors_all.txt
     |-feature_importance.txt
+    |-driver_sp_change.txt
 ```
 Graph_file
 -------------------------
