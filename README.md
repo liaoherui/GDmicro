@@ -77,7 +77,7 @@ For missing values in the "disease" or "study" column, you can replace them with
   optional arguments:
     -h, --help                    Show help message and exit.
     -i, --input_dir               The directory of input csv file.
-    -t, --train_mode              If set to 1, then will apply k-fold cross validation to all input datasets. This mode can only be used when input datasets are all training data. The input data should be the output of the train mode of GDmicro_preprocess. (default: 0)
+    -t, --train_mode              If set to 1, then will apply k-fold cross validation to all input datasets. This mode can only be used when input datasets all have labels and set as "train" in input file. (default: 0)
     -d, --disease                 The name of disease.
     -k, --kneighbor               The number of neighborhoods in the knn graph. (default: 5)
     -e, --apply_node              If set to 1, then will apply node importance calculation, which may take a long time. (default: not use).
