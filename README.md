@@ -92,10 +92,6 @@ GDmicro_res
     |-sample_kneighbors_all.txt
     |-feature_importance.txt
 ```
-Feature_file
-------------
-This folder contains files used and files output by the feature selection program and deep adaptation network.
-
 Graph_file
 -------------------------
 This folder contains files used and files output in the graph construction process.
