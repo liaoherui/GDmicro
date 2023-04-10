@@ -1073,6 +1073,8 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         ot2.close()
         os.system('rm ' + uid + '.log')
     os.system('rm -rf '+rdir+'/tem_files')
+    os.system('rm -rf '+fdir)
+    os.system('rm -rf '+gdir)
     #exit()
 
 
