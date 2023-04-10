@@ -81,6 +81,7 @@ For missing values in the "disease" or "study" column, you can replace them with
     -d, --disease                 The name of disease.
     -k, --kneighbor               The number of neighborhoods in the knn graph. (default: 5)
     -e, --apply_node              If set to 1, then will apply node importance calculation, which may take a long time. (default: not use).
+    -n, --node_num                How many nodes will be output during the node importance calculation process. (default:20)
     -f, --feature_num             How many features (top x features) will be analyzed during the feature influence score calculation process. (default: x=10)
     -c, --cvfold                  The value of k in k-fold cross validation. (default: 10).
     -s, --randomseed              The random seed. (default: not use)
@@ -97,6 +98,7 @@ GDmicro_res
 |-Graph_file/
 |-Res_file/
     |-final_predict_metrics.txt
+    |-driver_sp_change.txt
     |-sample_prob.txt
     |-sample_kneighbors_all.txt
     |-feature_importance.txt
@@ -120,6 +122,10 @@ This file contains the neighbor information of each node in the constructed grap
 feature_importance.txt
 ----------------------
 This file contains the identified biomarkers information. All features are ranked by the importance in the descending order.
+
+driver_sp_change.txt
+----------------------
+This file contains the identified biomarkers' influence scores. By default, GDmicro calculates the top 10 important features' influence scores. Users can adjust the analyzed feature number by `-f` parameter.
 
   ## -Contact-
   
