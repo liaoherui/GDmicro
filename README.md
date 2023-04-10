@@ -39,7 +39,7 @@ If you have installed GDmicro. Then you can reproduce the results in the paper u
 
 ## Usage
 ### Instruction about input data.<BR/>
-To use GDmicro, you are expected to provide microbioal species abundance matrix (csv format) as input. One example is given below.
+To use GDmicro, you are expected to provide microbioal species abundance matrix (csv format) as input. One example is given below. All datasets used in the paper can be found in the "Input_files" folder.
 
   | subject_id       | class        | disease       | study      | Acidaminococcus_intestini  | ...     |
   |--------------|--------------|--------------|------------|------------|------------|
