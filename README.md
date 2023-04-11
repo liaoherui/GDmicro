@@ -90,7 +90,6 @@ For missing values in the "disease" or "study" column, you can replace them with
     -c, --cvfold                  The value of k in k-fold cross validation. (default: 10).
     -s, --randomseed              The random seed. (default: not use)
     -a, --domain_adapt            Whether apply domain adaptation to the test dataset. If set to 0, then will use cross-entropy loss rather than domain adaptation loss. (default: use).
-    -r, --reverse                 If set to 1, then will use functional data as node features, and compostitional data to build edges. (default: 0)
     -o, --outdir                  Output directory of test results. (Default: GDmicro_res).
   ```
   
