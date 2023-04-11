@@ -233,7 +233,8 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
                 out, ml = model_raw(X_test_nots, tgt_data)
                 test_auc=AUC(out,y_test_t)
             if epoch % 10 ==0 and close_cv==0:
-                #model.eval()
+                if wwl==0:
+                    model_raw.eval()
                 out,ml=model_raw(X_val_nots,tgt_data)
                 val_acc=accuracy(out,y_val_t)
                 print('Train iter: {} [({:.0f}%)]\tLoss: {:.6f}\tsoft_Loss: {:.6f}\tmmd_Loss: {:.6f}\tTrain_accuracy:'.format(epoch, 100. * epoch / 100, loss.item(), cls_loss.item(), mmd_loss.item()),train_acc)
