@@ -864,6 +864,7 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         #exit()
         #o3=open(rdir+'/sample_prob_fold'+str(fn+1)+'.txt','w+')
         # Select features using lasso
+        o1.write('Fold {}'.format(fn + 1) + '\n')
         
         # Select features using lasso
         if uf==0:
