@@ -322,7 +322,8 @@ def train_fs(epoch,idx_train_in,idx_val_in,model,optimizer,features,adj,labels,o
     model.eval()
     output=model(features,adj)
     #loss_val = torch.nn.functional.nll_loss(output[idx_val_in], labels[idx_val_in])
-    if close_cv==0:
+    auc_val=0
+    if close_cv==0 and wwl==0:
             loss_val = torch.nn.functional.nll_loss(output[idx_val_in], labels[idx_val_in])
             acc_val = accuracy(output[idx_val_in], labels[idx_val_in])
             auc_val = AUC(output[idx_val_in], labels[idx_val_in])
@@ -332,7 +333,7 @@ def train_fs(epoch,idx_train_in,idx_val_in,model,optimizer,features,adj,labels,o
         if wwl==1:
             o.write('Epoch: {:04d}'.format(epoch+1)+' loss_train: {:.4f}'.format(loss_train.item())+' acc_train: {:.4f}'.format(acc_train.item())+' loss_val: {:.4f}'.format(loss_val.item())+' acc_val: {:.4f}'.format(acc_val.item())+' time: {:.4f}s'.format(time.time() - t)+' AUC_train: {:.4f}'.format(auc_train.item())+' AUC_val: {:.4f}'.format(auc_val.item())+'')
         else:
-            o.write('Epoch: {:04d}'.format(epoch+1)+' loss_train: {:.4f}'.format(loss_train.item())+' acc_train: {:.4f}'.format(acc_train.item())+' loss_val: {:.4f}'.format(loss_val.item())+' acc_val: {:.4f}'.format(acc_val.item())+' time: {:.4f}s'.format(time.time() - t)+' AUC_train: {:.4f}'.format(auc_train.item())+' AUC_val: {:.4f}'.format(auc_val.item())+'\n')
+            o.write('Epoch: {:04d}'.format(epoch+1)+' loss_train: {:.4f}'.format(loss_train.item())+' acc_train: {:.4f}'.format(acc_train.item())+' time: {:.4f}s'.format(time.time() - t)+' AUC_train: {:.4f}'.format(auc_train.item())+'\n')
         if auc_val>max_val_auc and record==1:
             o3=open(rdir+'/sample_prob_fold'+str(fold)+'_val.txt','w+')
             output_res=torch.exp(output[idx_val_in])
