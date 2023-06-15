@@ -130,5 +130,12 @@ This file contains the identified biomarkers' contribution scores. By default, G
   ## -Contact-
   
  If you have any questions, please email us: heruiliao2-c@my.cityu.edu.hk
+ 
+ ## References:
+
+how to cite this tool:
+```
+Liao, H., Shang, J., & Sun, Y. GDmicro: classifying host disease status with GCN and Deep adaptation network based on the human gut microbiome data. bioRxiv. 2023. https://doi.org/10.1101/2023.06.12.544696
+```
 
 
