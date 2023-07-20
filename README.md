@@ -37,6 +37,14 @@ If you have installed GDmicro. Then you can run the commands below to test the p
 `python GDmicro.py -i Input_files/CRC_10fold.csv -t 1 -d CRC -o GDmicro_Res/CRC_10fold`<BR/>
 `python GDmicro.py -i Input_files/CRC_FRA_LOSO.csv -s 10 -d CRC -o GDmicro_Res/CRC_FRA_LOSO`
 
+Note, if you meet `ResolvePackageNotFound` error when creating Conda environment, then you can try the commands below.
+
+`conda env create -f environment_clean.yaml`<BR/>
+`conda activate gdmicro`<BR/>
+
+`python GDmicro.py -h`<BR/>
+
+
 You can also reproduce all the results in the paper using the command below. (Note: all LOSO experiments are given the random seed = 10 (`-s 10`) to make sure the reproducibility of results)
 
 `sh run_GDmicro_demo.sh`<BR/>
