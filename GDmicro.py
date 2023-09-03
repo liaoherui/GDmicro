@@ -900,7 +900,7 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         # Train MLP on selected features 10 times and selecte the best model to build the graph
         #exit()
         #graph=run_MLP_embedding.build_graph_mlp('../New_datasets/T2D_data_2012_Trans/T2D_eggNOG_norm.txt',train_idx,val_idx,meta,disease,fn+1,gdir)
-        if doadpt==1:
+        if doadpt==1 and len(test_idx)>12:
             if reverse==0 and uf==0:
                 graph=run_MLP_embedding_da.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
             else:
