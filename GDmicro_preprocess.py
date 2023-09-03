@@ -39,7 +39,108 @@ def trans_meta_train(infile,out):
         o.write(line+'\ttrain\n')
     o.close()
 
+def extract_tout(tout,d,ofile):
+    o=open(ofile,'w+')
+    f=open(tout,'r')
+    line=f.readline().strip()
+    ele=line.split('\t')
+    dc={}
+    c=0
+    arr=[]
+    for e in ele:
+        if e in d:
+            dc[c]=''
+            arr.append(e)
+        c+=1
+    o.write('\t'.join(arr)+'\n')
+    while True:
+        line=f.readline().strip()
+        if not line:break
+        ele=line.split('\t')
+        o.write(ele[0])
+        c=0
+        tem=[]
+        for e in ele[1:]:
+            if c in dc:
+                #o.write('\t'+e)
+                tem.append(e)
+            c+=1
+        o.write('\t'+'\t'.join(tem)+'\n')
+    o.close()
 
+
+def normalize_data_small(infile,mtype,meta,dtype,ofile,inmerge,inmerge_meta):
+    f=open(meta,'r')
+    meta_content=[]
+    line=f.readline().strip()
+    meta_content.append(line)
+    c=0
+    ag=0
+    d={}
+    while True:
+        line=f.readline().strip()
+        if not line:break
+        ele=line.split('\t')
+        d[ele[2]]=''
+        meta_content.append(line)
+        label=line.split('\t')[3]
+        if label=='Unknown':
+            ag=1
+        c+=1
+    uid = uuid.uuid1().hex
+    if ag==1:
+        n_split_d=int(c/2)
+        n_split_h=c-n_split_d
+        ml_d=[dtype for i in range(n_split_d)]
+        ml_h=['healthy' for i in range(n_split_h)]
+        ml=ml_d+ml_h
+        #print(ml)
+        #exit()
+        if len(meta_content[1:])<13:
+            tmeta = 'tem_meta_' + uid + '.tsv'
+            ot = open(tmeta, 'w+')
+            ot.write(meta_content[0]+'\n')
+            ft=open(inmerge_meta,'r')
+            line=ft.readline()
+            i=0
+            while True:
+                line=ft.readline().strip()
+                if not line:break
+                ele=line.split('\t')
+                if ele[-1]=='train':
+                    ot.write('\t'.join(ele[:-1])+'\n')
+                else:
+                    ele[3]=ml[i]
+                    i+=1
+                    ot.write('\t'.join(ele[:-1])+'\n')
+            ot.close()
+            tout='tem_matrix_' + uid + '.tsv'
+
+            os.system('Rscript norm_features.R ' + mtype + ' ' + inmerge + ' ' + tmeta + ' ' + dtype + ' ' + tout)
+            extract_tout(tout,d,ofile)
+            os.system('rm ' + tmeta+' '+tout)
+        else:
+            tmeta='tem_meta_'+uid+'.tsv'
+            ot=open(tmeta,'w+')
+            ot.write(meta_content[0]+'\n')
+            i=0
+            for c in meta_content[1:]:
+                ele=c.split('\t')
+                ele[3]=ml[i]
+                i+=1
+                ot.write('\t'.join(ele)+'\n')
+            ot.close()
+            #exit()
+            os.system('Rscript norm_features.R '+mtype+' '+infile+' '+tmeta+' '+dtype+' '+ofile)
+            os.system('rm '+tmeta)
+    else:
+        if len(meta_content[1:]) < 13:
+            tout = 'tem_matrix_' + uid + '.tsv'
+            os.system('Rscript norm_features.R ' + mtype + ' ' + inmerge + ' ' + inmerge_meta + ' ' + dtype + ' ' + tout)
+            extract_tout(tout, d, ofile)
+            os.system('rm ' + tout)
+        else:
+            os.system('Rscript norm_features.R '+mtype+' '+infile+' '+meta+' '+dtype+' '+ofile)
 
 def normalize_data(infile,mtype,meta,dtype,ofile):
     f=open(meta,'r')
@@ -48,9 +149,12 @@ def normalize_data(infile,mtype,meta,dtype,ofile):
     meta_content.append(line)
     c=0
     ag=0
+    #d={}
     while True:
         line=f.readline().strip()
         if not line:break
+        ele=line.split('\t')
+        #d[ele[2]]=''
         meta_content.append(line)
         label=line.split('\t')[3]
         if label=='Unknown':
@@ -64,7 +168,8 @@ def normalize_data(infile,mtype,meta,dtype,ofile):
         ml=ml_d+ml_h
         #print(ml)
         #exit()
-        uid=uuid.uuid1().hex
+        uid = uuid.uuid1().hex
+
         tmeta='tem_meta_'+uid+'.tsv'
         ot=open(tmeta,'w+')
         ot.write(meta_content[0]+'\n')
@@ -261,7 +366,18 @@ def split_file(infile,disease,outdir):
             c+=1
     return intrain,intest
 
-
+def check_test_num(meta):
+    f=open(meta,'r')
+    line=f.readline()
+    c=0
+    while True:
+        line=f.readline()
+        if not line:break
+        c+=1
+    if c<13:
+        return True
+    else:
+        return False
 
     
     
@@ -343,9 +459,19 @@ def preprocess(infile,train_mode,disease,outdir):
     if train_mode==0:
         print('Preprocess 1 - Merge metadata.')
         trans_meta(intrain_meta,intest_meta,out+"/"+dtype+'_meta.tsv')
+        #exit()
+        if check_test_num(intest_meta):
+            merge_sp(intrain_sp,intest_sp,outdir+"/Split_dir/Test/"+dtype+'_merge_sp_raw.csv')
+            temerge=outdir+"/Split_dir/Test/"+dtype+'_merge_sp_raw.csv'
+            os.system('cp '+out+"/"+dtype+'_meta.tsv'+' '+outdir+"/Split_dir/Test/"+dtype+'_meta_merge.tsv')
+            temeta=outdir+"/Split_dir/Test/"+dtype+'_meta_merge.tsv'
         print('Preprocess 2 - Normalize all abundance matrices.')
         normalize_data(intrain_sp,'species',intrain_meta,dtype,out+"/"+dtype+'_train_sp_norm.csv')
-        normalize_data(intest_sp,'species',intest_meta,dtype,out+"/"+dtype+'_test_sp_norm.csv')
+        if check_test_num(intest_meta):
+            normalize_data_small(intest_sp, 'species', intest_meta, dtype, out + "/" + dtype + '_test_sp_norm.csv',temerge,temeta)
+            #exit()
+        else:
+            normalize_data(intest_sp,'species',intest_meta,dtype,out+"/"+dtype+'_test_sp_norm.csv')
         #normalize_data(intrain_eggnog,'eggNOG',intrain_meta,dtype,out+"/"+dtype+'_train_eggNOG_norm.csv')
         #normalize_data(intest_eggnog,'eggNOG',intest_meta,dtype,out+"/"+dtype+'_test_eggNOG_norm.csv')
     
@@ -382,7 +508,7 @@ if __name__=="__main__":
 '''
 
 
-
+#preprocess('../Single_test_datasets/train_5studies_1test_single/GuptaA_2019_test_1.csv',0,'CRC','single_sample')
 
 
 

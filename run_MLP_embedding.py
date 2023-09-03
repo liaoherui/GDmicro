@@ -113,7 +113,7 @@ def AUC(output,labels):
     auc=metrics.auc(fpr,tpr)
     return auc
 
-def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx,kneighbor,rseed,wwl,rdir,close_cv):
+def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize):
     if not rseed==0:
         setup_seed(rseed)
     o=open(odir+'/train_res_stat_Fold'+str(fn)+'.txt','w+')
@@ -142,7 +142,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
 
     train_nots_loader=Data.DataLoader(
         dataset=train_data_nots,
-        batch_size=64,
+        batch_size=bsize,
         shuffle=True,
         num_workers=0,
     )

@@ -440,6 +440,33 @@ def test(model,idx_test,features,adj,labels,o,max_test_auc,rdir,fn,classes_dict,
             c+=1
     return auc_test
 
+def test_new_acc(model,idx_test,features,adj,labels,o,max_test_acc,rdir,fn,classes_dict,tid2name,record):
+    model.eval()
+    output=model(features,adj)
+    loss_test=torch.nn.functional.nll_loss(output[idx_test], labels[idx_test])
+    preds=output[idx_test].max(1)[1].type_as(labels[idx_test])
+    acc_test=accuracy(output[idx_test],labels[idx_test])
+    auc_test=AUC(output[idx_test], labels[idx_test])
+    print(" | Test set results:","loss={:.4f}".format(loss_test.item()),"accuracy={:.4f}".format(acc_test.item()),"AUC={:.4f}".format(auc_test.item()))
+    o.write(" | Test set results:"+"loss={:.4f}".format(loss_test.item())+" accuracy: {:.4f}".format(acc_test.item())+" AUC: {:.4f}".format(auc_test.item())+'\n')
+    if acc_test>max_test_acc and record==1:
+        o3=open(rdir+'/sample_prob_fold'+str(fn)+'_test.txt','w+')
+        output_res=torch.exp(output[idx_test])
+        output_res=output_res.data.numpy()
+        c=0
+        dt={}
+        for n in classes_dict:
+            if n=="Unknown":continue
+            if int(classes_dict[n][0])==1:
+                dt[0]=n
+            else:
+                dt[1]=n
+        for a in output_res:
+            nt=labels[idx_test[c]].data.numpy()
+            o3.write(tid2name[int(idx_test[c])]+'\t'+str(a[0])+'\t'+str(a[1])+'\t'+str(labels[idx_test[c]].data.numpy())+'\t'+str(dt[int(nt)])+'\n')
+            c+=1
+    return acc_test
+
 def run_GCN_test(mlp_or_not,epochs,graph,node_file,outfile1,outfile2,input_sample):
     '''
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

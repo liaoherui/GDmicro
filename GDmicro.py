@@ -11,7 +11,7 @@ import run_MLP_embedding_da
 import run_MLP_embedding_da_for_node
 import run_MLP_embedding
 from GDmicro_preprocess import preprocess
-from gcn_model import encode_onehot,GCN,train,train_fs,test,test_unknown,normalize,sparse_mx_to_torch_sparse_tensor
+from gcn_model import encode_onehot,GCN,train,train_fs,test,test_new_acc,test_unknown,normalize,sparse_mx_to_torch_sparse_tensor
 from calculate_avg_acc_of_cross_validation_test import cal_acc_cv
 import calculate_avg_acc_of_cross_validation_train_mode
 import torch
@@ -772,7 +772,7 @@ def load_dcs(infile,dcs):
         dcs[cs]=ele[0]
         cs+=1
 
-def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse,vnode,uf):
+def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse,vnode,uf,bsize,rfi):
     if not rseed==0:
         setup_seed(rseed)
     # Load species name -> for feature importance
@@ -902,14 +902,14 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         #graph=run_MLP_embedding.build_graph_mlp('../New_datasets/T2D_data_2012_Trans/T2D_eggNOG_norm.txt',train_idx,val_idx,meta,disease,fn+1,gdir)
         if doadpt==1:
             if reverse==0 and uf==0:
-                graph=run_MLP_embedding_da.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
+                graph=run_MLP_embedding_da.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
             else:
-                graph=run_MLP_embedding_da.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
+                graph=run_MLP_embedding_da.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
         else:
             if reverse==0 and uf==0:
-                graph=run_MLP_embedding.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
+                graph=run_MLP_embedding.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
             else:
-                graph=run_MLP_embedding.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv)
+                graph=run_MLP_embedding.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
 
         #exit()
         
@@ -957,6 +957,7 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         optimizer = torch.optim.Adam(model.parameters(),lr=0.01, weight_decay=1e-5)
         max_val_auc=0
         max_test_auc=0
+        #max_test_acc=0
         for epoch in range(150):
             val_auc=train(epoch,train_idx,val_idx,model,optimizer,features,adj,labels,o1,max_val_auc,rdir,fn+1,classes_dict,tid2name,wwl,1,close_cv)
             raw_mval_auc=max_val_auc
@@ -964,7 +965,10 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
                 max_val_auc=val_auc
             ### New part for testing datasets
             if wwl==1 and close_cv==0:
-                test_auc=test(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1)
+                if len(test_idx)<13:
+                    test_auc=test_new_acc(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1)
+                else:
+                    test_auc=test(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1)
                 if test_auc>max_test_auc:
                     max_test_auc=test_auc
                 if test_auc>btauc:
@@ -979,7 +983,10 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
                     bset.append(fn)
             else:
                 if wwl==1:
-                    test_auc=test(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1)
+                    if len(test_idx)<13:
+                        test_auc=test_new_acc(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1)
+                    else:
+                        test_auc=test(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1)
                     if test_auc>max_test_auc:
                         max_test_auc=test_auc
                     if test_auc>btauc:
@@ -1056,7 +1063,8 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         pack_output_nl(tem,rdir)
     feature_id=list(range(int(features.shape[1])))
     # Feature importance
-    if True:
+    
+    if rfi==1:
         selected = {}
         selected_arr = []
         o3 = open(rdir + '/feature_importance.txt', 'w+')
@@ -1073,6 +1081,7 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         detect_dsp(btgraph, eg_fs_norm,feature_id, labels_raw,bset[2],bset[3], tem_train_id, test_idx, rdir,ot2,classes_dict, tid2name, wwl,close_cv,sid,sname)
         ot2.close()
         os.system('rm ' + uid + '.log')
+
     os.system('rm -rf '+rdir+'/tem_files')
     os.system('rm -rf '+fdir)
     os.system('rm -rf '+gdir)
@@ -1160,12 +1169,14 @@ def main():
     
     parser.add_argument('-d','--disease',dest='disease',type=str,help="The name of the disease.")
     parser.add_argument('-k','--kneighbor',dest='kneighbor',type=str,help="The number of neighborhoods in the knn graph. (default: 5)")
+    parser.add_argument('-b','--batchsize',dest='bsize',type=str,help="The batch size during the training process. Should be set to 1 if there is only one test sample. (default: 64)")
     parser.add_argument('-e','--apply_node',dest='anode',type=str,help="If set to 1, then will apply node importance calculation, which may take a long time. (default: not use).")
     parser.add_argument('-n','--node_num',dest='nnum',type=str,help="How many nodes will be output during the node importance calculation process. (default:20).")
     parser.add_argument('-f','--feature_num',dest='fnum',type=str,help="How many features (top x features) will be analyzed during the feature influence score calculation process. (default: x=10)")
     parser.add_argument('-c','--cvfold',dest='cvfold',type=str,help="The value of k in k-fold cross validation.  (default: 10)")
     parser.add_argument('-s','--randomseed',dest='rseed',type=str,help="The random seed used to reproduce the result.  (default: not use)")
     parser.add_argument('-a','--domain_adapt',dest='doadpt',type=str,help="Whether apply domain adaptation to the test dataset. If set to 0, then will use MLP rather than domain adaptation. (default: use)")
+    parser.add_argument('-r','--run_fi',dest='rfi',type=str,help="Whether run feature importance calculation process. If set to 0, then will not calculate the feature importance and contribution score. (default: 1)")
     #parser.add_argument('-r','--reverse',dest='reverse',type=str,help="If set to 1, then will use functional data as node features, and compostitional data to build edges. (default: 0)")
     #parser.add_argument('-v','--embed_vector_node',dest='vnode',type=str,help="If set to 1, then will apply domain adaptation network to node features, and use embedding vectors as nodes.. (default: 0)")
     #parser.add_argument('-u','--unique_feature',dest='uf',type=str,help="If set to 1, then will only use compostitional data to build edges and as node features.")
@@ -1175,6 +1186,8 @@ def main():
     args=parser.parse_args()
     infile=args.input_file
     train_mode=args.train_mode
+    bsize=args.bsize
+    rfi=args.rfi
 
     #close_cv=args.close_cv
     #input_fs=args.input_fs
@@ -1216,6 +1229,14 @@ def main():
     else:
         vnode=int(vnode)
     '''
+    if not bsize:
+        bsize=64
+    else:
+        bsize=int(bsize)
+    if not rfi:
+        rfi=1
+    else:
+        rfi=int(rfi)
     if not anode:
         anode=0
     else:
@@ -1259,7 +1280,7 @@ def main():
     
     if train_mode==0:
         input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features=scan_input(indir,disease,uf)
-        run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse,vnode,uf)
+        run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse,vnode,uf,bsize,rfi)
     else:
         input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features=scan_input_train_mode(indir,disease,uf)
         run_GCN_train_mode.run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode,reverse,uf)

@@ -126,7 +126,7 @@ def accuracy(output,labels):
     correct=correct.sum()
     return correct/len(labels)
 
-def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx,kneighbor,rseed,wwl,rdir,close_cv):
+def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize):
     if not rseed==0:
         setup_seed(rseed)
     o=open(odir+'/train_res_stat_Fold'+str(fn)+'.txt','w+')
@@ -157,21 +157,21 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
 
     train_nots_loader=Data.DataLoader(
         dataset=train_data_nots,
-        batch_size=64,
+        batch_size=bsize,
         shuffle=True,
         num_workers=0,
         drop_last=True,
     )
     test_nots_loader_train=Data.DataLoader(
         dataset=test_data_nots,
-        batch_size=64,
+        batch_size=bsize,
         shuffle=True,
         num_workers=0,
         drop_last=True,
     )
     test_nots_loader_test=Data.DataLoader(
         dataset=test_data_nots,
-        batch_size=64,
+        batch_size=bsize,
         shuffle=True,
         num_workers=0,
         drop_last=True,
@@ -182,8 +182,10 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
     max_train_auc=0
     max_test_acc=0
     max_test_auc=0
+    go=0
     for i in range(10):
         best_auc=0
+        best_acc=0
 
         model_raw=MLPclassifica(nfeat=X_train.shape[1])
 
@@ -232,6 +234,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
                 model_raw.eval()
                 out, ml = model_raw(X_test_nots, tgt_data)
                 test_auc=AUC(out,y_test_t)
+                test_acc=accuracy(out,y_test_t)
             if epoch % 10 ==0 and close_cv==0:
                 if wwl==0:
                     model_raw.eval()
@@ -246,6 +249,13 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
                 if float(test_auc)>float(best_auc):
                     best_auc=float(test_auc)
                     model=deepcopy(model_raw)
+                if len(y_test_t)<13:
+                    if go==0 and float(best_acc)==0:
+                        model=deepcopy(model_raw)
+                        go=1
+                    if float(test_acc)>float(best_acc):
+                        best_acc=float(test_acc)
+                        model=deepcopy(model_raw)
             else:
                 model=deepcopy(model_raw)
 
@@ -318,6 +328,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
         #_,pre_lab=torch.max(output,1)
         feature_output_test=model.featuremap.cpu()
         feature_out_test=np.array(feature_output_test)
+        go=0
         if wwl==1:
             test_accuracy=accuracy(output,y_test_t)
             test_auc=AUC(output,y_test_t)
@@ -327,20 +338,37 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
                 o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nVal accuracy: "+str(val_accuracy)+" Val AUC: "+str(val_auc)+"\nTest accuracy: "+str(test_accuracy)+" Test AUC: "+str(test_auc)+'\n')
             else:
                 o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nTest accuracy: "+str(test_accuracy)+" Test AUC: "+str(test_auc)+'\n')
-            if test_auc>max_test_auc:
-                max_test_acc=test_accuracy
-                max_test_auc=test_auc
-                np.savetxt(ofile1,feature_out)
-                if close_cv==0:
-                    np.savetxt(ofile2,feature_out_val)
-                np.savetxt(ofile3,feature_out_test)
-            if test_auc==max_test_auc and test_accuracy>max_test_acc:
-                max_test_acc=test_accuracy
-                max_test_auc=test_auc
-                np.savetxt(ofile1,feature_out)
-                if close_cv==0:
-                    np.savetxt(ofile2,feature_out_val)
-                np.savetxt(ofile3,feature_out_test)
+            if len(y_test_t)<13:
+                if go==0:
+                    max_test_acc=test_accuracy
+                    max_test_auc=test_auc
+                    np.savetxt(ofile1,feature_out)
+                    if close_cv==0:
+                        np.savetxt(ofile2,feature_out_val)
+                    np.savetxt(ofile3,feature_out_test)
+                    go=1
+                if test_acc>max_test_acc:
+                    max_test_acc=test_accuracy
+                    max_test_auc=test_auc
+                    np.savetxt(ofile1,feature_out)
+                    if close_cv==0:
+                        np.savetxt(ofile2,feature_out_val)
+                    np.savetxt(ofile3,feature_out_test)
+            else:
+                if test_auc>max_test_auc:
+                    max_test_acc=test_accuracy
+                    max_test_auc=test_auc
+                    np.savetxt(ofile1,feature_out)
+                    if close_cv==0:
+                        np.savetxt(ofile2,feature_out_val)
+                    np.savetxt(ofile3,feature_out_test)
+                if test_auc==max_test_auc and test_accuracy>max_test_acc:
+                    max_test_acc=test_accuracy
+                    max_test_auc=test_auc
+                    np.savetxt(ofile1,feature_out)
+                    if close_cv==0:
+                        np.savetxt(ofile2,feature_out_val)
+                    np.savetxt(ofile3,feature_out_test)
         else:
             if close_cv==0:
                 o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nVal accuracy: "+str(val_accuracy)+" Val AUC: "+str(val_auc)+'\n')

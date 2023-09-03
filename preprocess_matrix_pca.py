@@ -54,17 +54,26 @@ def pca(X,y,samples,outfig,ptitle,omatrix):
     reduced_x=pca.fit_transform(X)
     crc_x,crc_y=[],[]
     health_x,health_y=[],[]
+    #print(reduced_x)
     #print(len(X),len(reduced_x),len(y),y)
     dname='' 
     for i in range(len(reduced_x)):
         #print(len(reduced_x[i]))
         if not y[i]=='Health':
-            crc_x.append(reduced_x[i][0])
-            crc_y.append(reduced_x[i][1])
+            if len(reduced_x[i])==1:
+                crc_x.append(reduced_x[i][0])
+                crc_y.append(0)
+            else:
+                crc_x.append(reduced_x[i][0])
+                crc_y.append(reduced_x[i][1])
             dname=y[i]
         else:
-            health_x.append(reduced_x[i][0])
-            health_y.append(reduced_x[i][1])
+            if len(reduced_x[i])==1:
+                health_x.append(reduced_x[i][0])
+                health_y.append(0)
+            else:
+                health_x.append(reduced_x[i][0])
+                health_y.append(reduced_x[i][1])
     '''
     plt.figure()
     plt.scatter(crc_x,crc_y,c='r',marker='x',label=dname)
