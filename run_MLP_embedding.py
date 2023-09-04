@@ -152,6 +152,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
     max_train_auc=0
     max_test_acc=0
     max_test_auc=0
+    go=0
     for i in range(10):
 
         best_auc=0
@@ -225,7 +226,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
         _,pre_lab=torch.max(output,1)
         feature_output_test=mlpc.featuremap.cpu()
         feature_out_test=np.array(feature_output_test)
-        go=0
+        #go=0
         if wwl==1:
             test_accuracy=accuracy_score(y_test_t,pre_lab)
             test_auc=AUC(output,y_test_t)
