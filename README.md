@@ -94,7 +94,7 @@ For users' reference, all datasets used in the paper can be found in the "Input_
     -t, --train_mode              If set to 1, then will apply k-fold cross validation to all input datasets. This mode can only be used when input datasets all have labels and set as "train" in input file. (default: 0)
     -d, --disease                 The name of disease.
     -k, --kneighbor               The number of neighborhoods in the knn graph. (default: 5)
-    -b, --batchsize               The batch size during the training process. Should be set to 1 if there is only one test sample. (default: 64)
+    -b, --batchsize               The batch size during the training process.(default: 64)
     -e, --apply_node              If set to 1, then will apply node importance calculation, which may take a long time. (default: not use).
     -n, --node_num                How many nodes will be output during the node importance calculation process. (default:20)
     -f, --feature_num             How many features (top x features) will be analyzed during the feature contribution score calculation process. (default: x=10)
