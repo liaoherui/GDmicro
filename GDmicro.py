@@ -906,8 +906,6 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
             else:
                 graph=run_MLP_embedding_da.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
         else:
-            if not len(test_idx)>12:
-                wwl=0
             if reverse==0 and uf==0:
                 graph=run_MLP_embedding.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
             else:
