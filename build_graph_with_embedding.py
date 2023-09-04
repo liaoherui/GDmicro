@@ -33,7 +33,8 @@ def build(infile,insample,pre,odir,kneighbor,rfile):
    preprocess_matrix_pca.run_pca(j1,j2,p1_out,insample,pre,p2)
    o2=open(odir+'/build_log.txt','w+')
    build_graph_given_matrix_with_knn.construct_g(j1,j2,p2+'/'+pre+'_matrix_ef_pca.csv',insample,kneighbor,p3,pre,o2,rfile)
-   os.system('rm '+j2)
+   if os.path.exists(j2):
+    os.system('rm '+j2)
    transform_matrix_anno.trans(p2+'/'+pre+'_matrix_ef_pca.csv',p4,pre,insample)
 
 

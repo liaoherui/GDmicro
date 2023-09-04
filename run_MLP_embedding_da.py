@@ -328,7 +328,6 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
         #_,pre_lab=torch.max(output,1)
         feature_output_test=model.featuremap.cpu()
         feature_out_test=np.array(feature_output_test)
-        #go=0
         if wwl==1:
             test_accuracy=accuracy(output,y_test_t)
             test_auc=AUC(output,y_test_t)
@@ -338,6 +337,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
                 o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nVal accuracy: "+str(val_accuracy)+" Val AUC: "+str(val_auc)+"\nTest accuracy: "+str(test_accuracy)+" Test AUC: "+str(test_auc)+'\n')
             else:
                 o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nTest accuracy: "+str(test_accuracy)+" Test AUC: "+str(test_auc)+'\n')
+            '''
             if len(y_test_t)<13:
                 if go==0:
                     max_test_acc=test_accuracy
@@ -354,7 +354,8 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
                     if close_cv==0:
                         np.savetxt(ofile2,feature_out_val)
                     np.savetxt(ofile3,feature_out_test)
-            else:
+            '''
+            if True:
                 if test_auc>max_test_auc:
                     max_test_acc=test_accuracy
                     max_test_auc=test_auc

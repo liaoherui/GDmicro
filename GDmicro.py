@@ -647,6 +647,7 @@ def pack_output_wwl(tem,rdir):
             if fd=="fold"+str(tfold):
                 os.system('cp '+temd+'/'+filename+' '+rdir+'/'+pre+'.txt')
     if tem==0:
+        #True
         os.system('rm -rf '+temd)
 
 def pack_output_nl(tem,rdir):
@@ -1081,7 +1082,7 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         detect_dsp(btgraph, eg_fs_norm,feature_id, labels_raw,bset[2],bset[3], tem_train_id, test_idx, rdir,ot2,classes_dict, tid2name, wwl,close_cv,sid,sname)
         ot2.close()
         os.system('rm ' + uid + '.log')
-
+    #exit()
     os.system('rm -rf '+rdir+'/tem_files')
     os.system('rm -rf '+fdir)
     os.system('rm -rf '+gdir)

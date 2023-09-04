@@ -379,6 +379,33 @@ def check_test_num(meta):
     else:
         return False
 
+
+def scan_test_num(infile):
+    f=open(infile,'r')
+    arr=[]
+    tn=0
+    line=f.readline().strip()
+    arr.append(line)
+    while True:
+        line=f.readline().strip()
+        if not line:break
+        ele=re.split(',',line)
+        if ele[1]=='test':
+            ele[2]='Unknown'
+            tn+=1
+        tem=','.join(ele)
+        arr.append(tem)
+    if tn<13:
+        uid = uuid.uuid1().hex
+        ninfile='inmatrix_'+uid+'.csv'
+        o=open(ninfile,'w+')
+        for a in arr:
+            o.write(a+'\n')
+        o.close()
+        return ninfile
+    else:
+        return ''
+
     
     
 
@@ -398,7 +425,11 @@ def preprocess(infile,train_mode,disease,outdir):
 
     #intrain=args.input_train
     #intest=args.input_test
-
+    scan_res=scan_test_num(infile)
+    if not scan_res=='':
+        infile=scan_res
+    #print(infile)
+    #exit()
     intrain,intest=split_file(infile,disease,outdir)
 
     train_mode=train_mode
@@ -499,6 +530,9 @@ def preprocess(infile,train_mode,disease,outdir):
     if os.path.exists(intrain+'/pre_features'):
         os.system('cp -rf '+intrain+'/pre_features '+out)
     '''
+    #exit()
+    if not scan_res=='':
+        os.system('rm '+scan_res)
     return out
 
         

@@ -166,7 +166,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
         canvas1=hl.Canvas()
         print_step=25
 
-
+        
         for epoch in range(50):
             for step, (b_x, b_y) in enumerate(train_nots_loader):
                 _,_,output=mlpc_raw(b_x)
@@ -235,6 +235,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
                 o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nVal accuracy: "+str(val_accuracy)+" Val AUC: "+str(val_auc)+"\nTest accuracy: "+str(test_accuracy)+" Test AUC: "+str(test_auc)+'\n')
             else:
                 o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nTest accuracy: "+str(test_accuracy)+" Test AUC: "+str(test_auc)+'\n')
+            '''
             if len(y_test_t)<13:
                 if go==0:
                     max_test_acc=test_accuracy
@@ -251,22 +252,21 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
                     if close_cv==0:
                         np.savetxt(ofile2,feature_out_val)
                     np.savetxt(ofile3,feature_out_test)
-
-            else:
-                if test_auc>max_test_auc:
-                    max_test_acc=test_accuracy
-                    max_test_auc=test_auc
-                    np.savetxt(ofile1,feature_out)
-                    if close_cv==0:
-                        np.savetxt(ofile2,feature_out_val)
-                    np.savetxt(ofile3,feature_out_test)
-                if test_auc==max_test_auc and test_accuracy>max_test_acc:
-                    max_test_acc=test_accuracy
-                    max_test_auc=test_auc
-                    np.savetxt(ofile1,feature_out)
-                    if close_cv==0:
-                        np.savetxt(ofile2,feature_out_val)
-                    np.savetxt(ofile3,feature_out_test)
+            '''
+            if test_auc>max_test_auc:
+                max_test_acc=test_accuracy
+                max_test_auc=test_auc
+                np.savetxt(ofile1,feature_out)
+                if close_cv==0:
+                    np.savetxt(ofile2,feature_out_val)
+                np.savetxt(ofile3,feature_out_test)
+            if test_auc==max_test_auc and test_accuracy>max_test_acc:
+                max_test_acc=test_accuracy
+                max_test_auc=test_auc
+                np.savetxt(ofile1,feature_out)
+                if close_cv==0:
+                    np.savetxt(ofile2,feature_out_val)
+                np.savetxt(ofile3,feature_out_test)
         else:
             if close_cv==0:
                 o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nVal accuracy: "+str(val_accuracy)+" Val AUC: "+str(val_auc)+'\n')
@@ -303,6 +303,7 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
     build_graph_with_embedding.build(odir+'/merge_embedding_Fold'+str(fn)+'.txt',inmetaf,'eggNOG',odir+'/Fold'+str(fn),kneighbor,rdir+'/sample_kneighbors_all_fold'+str(fn)+'.txt')
     graph=odir+'/Fold'+str(fn)+'/P3_build_graph/eggNOG_pca_knn_graph_final.txt'
     return graph
+    #exit()
 
  
     
