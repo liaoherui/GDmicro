@@ -7,7 +7,7 @@ from torch.optim import SGD,Adam
 from sklearn.metrics import accuracy_score
 from sklearn import metrics
 import matplotlib.pyplot as plt
-import hiddenlayer as hl
+#import hiddenlayer as hl
 import os
 import merge_embedding_vector_train_mode
 import build_graph_with_embedding_train_mode
@@ -152,8 +152,8 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,kneighbo
         optimizer=torch.optim.Adam(mlpc_raw.parameters(),lr=0.01,weight_decay=1e-5)
         loss_func=nn.CrossEntropyLoss()
 
-        history1=hl.History()
-        canvas1=hl.Canvas()
+        #history1=hl.History()
+        #canvas1=hl.Canvas()
         print_step=25
 
 
