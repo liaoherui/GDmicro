@@ -50,6 +50,7 @@ def check_trans_visualize_graph(sinfo,outgraph,out,pre,olog):
 
     #print(all_edges)
     #exit()
+    o.close()
 
     G.add_edges_from(all_edges)
     print('The number of edges of '+pre+' PCA KNN graph:',G.number_of_edges())
