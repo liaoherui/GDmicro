@@ -1,3 +1,4 @@
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/gdmicro/README.html)
 #  GDmicro - Use GCN and Deep adaptation network to classify host disease status based on human gut microbiome data.
 
 Input and core components:  __GDmicro takes microbioal compositional abundance data as input.__ It utilizes GCN and deep adaptation network to improve the classification performance and robustness. Furthermore, it can identify potential biomarkers and indicate how these biomarkers affect hosts' disease status.
@@ -22,7 +23,19 @@ Workflow: To remove domain discrepency between training and test data, deep adap
 
 
 ## Install
-Yon can install GDmicro via [Anaconda](https://anaconda.org/) using the commands below:<BR/>
+Option 1 - The first way to install GDmicro, is to use [bioconda](https://bioconda.github.io/).
+Once you have bioconda environment installed, install package gdmicro:
+
+	conda install -c bioconda gdmicro
+ 
+ It should be noted that some commands have been replaced if you install GDmicro using bioconda. (See below)
+
+Command (Not bioconda)    |	Command (bioconda)
+------------ | ------------- 
+python GDmicro.py -h | gdmicro -h
+
+
+Option 2 - Also, yon can install GDmicro via [Anaconda](https://anaconda.org/) using the commands below:<BR/>
 
 `git clone https://github.com/liaoherui/GDmicro.git`<BR/>
 `cd GDmicro`<BR/>
