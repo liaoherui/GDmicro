@@ -126,7 +126,7 @@ def accuracy(output,labels):
     correct=correct.sum()
     return correct/len(labels)
 
-def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize):
+def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize,oin):
     if not rseed==0:
         setup_seed(rseed)
     o=open(odir+'/train_res_stat_Fold'+str(fn)+'.txt','w+')
@@ -331,7 +331,8 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
         if wwl==1:
             test_accuracy=accuracy(output,y_test_t)
             test_auc=AUC(output,y_test_t)
-            print("test_accuracy:",test_accuracy,"test_AUC:",test_auc)
+            if oin==0:
+                print("test_accuracy:",test_accuracy,"test_AUC:",test_auc)
         #exit()
             if close_cv==0:
                 o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nVal accuracy: "+str(val_accuracy)+" Val AUC: "+str(val_auc)+"\nTest accuracy: "+str(test_accuracy)+" Test AUC: "+str(test_auc)+'\n')

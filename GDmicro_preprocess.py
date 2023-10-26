@@ -379,32 +379,50 @@ def check_test_num(meta):
     else:
         return False
 
+def pre_load(infile):
+    f=open(infile,'r')
+    d={}
+    while True:
+        line=f.readline().strip()
+        if not line:break
+        ele=re.split(',',line)
+        d[ele[0]]=[ele[1],ele[2]]
+    return d
 
-def scan_test_num(infile):
+
+
+def scan_test_num(infile,disease):
     f=open(infile,'r')
     arr=[]
     tn=0
     line=f.readline().strip()
     arr.append(line)
+    d=pre_load('allmeta.tsv')
+    oin=0
     while True:
         line=f.readline().strip()
         if not line:break
         ele=re.split(',',line)
         if ele[1]=='test':
-            ele[2]='Unknown'
+            if ele[2]=='Unknown' and disease==d[ele[0]][1]:
+                if ele[0] in d:
+                    ele[2]=d[ele[0]][0]
+                    oin=1
+            #ele[2]='Unknown'
             tn+=1
         tem=','.join(ele)
         arr.append(tem)
-    if tn<13:
-        uid = uuid.uuid1().hex
-        ninfile='inmatrix_'+uid+'.csv'
-        o=open(ninfile,'w+')
-        for a in arr:
-            o.write(a+'\n')
-        o.close()
-        return ninfile
+    uid = uuid.uuid1().hex
+    ninfile='inmatrix_'+uid+'.csv'
+    o=open(ninfile,'w+')
+    for a in arr:
+        o.write(a+'\n')
+    o.close()
+    return ninfile,oin
+    '''
     else:
         return ''
+    '''
 
     
     
@@ -425,7 +443,7 @@ def preprocess(infile,train_mode,disease,outdir):
 
     #intrain=args.input_train
     #intest=args.input_test
-    scan_res=scan_test_num(infile)
+    scan_res,oin=scan_test_num(infile,disease)
     if not scan_res=='':
         infile=scan_res
     #print(infile)
@@ -533,7 +551,7 @@ def preprocess(infile,train_mode,disease,outdir):
     #exit()
     if not scan_res=='':
         os.system('rm '+scan_res)
-    return out
+    return out,oin
 
         
 '''

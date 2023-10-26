@@ -606,7 +606,7 @@ def node_importance_check(selected,selected_arr,tem_train_id,val_idx,test_idx,fe
     o6.close()
 
 
-def pack_output_wwl(tem,rdir):
+def pack_output_wwl(tem,rdir,oin):
     temd=rdir+'/tem_files'
     if not os.path.exists(temd):
         os.makedirs(temd)
@@ -623,15 +623,24 @@ def pack_output_wwl(tem,rdir):
         nline=re.sub(' best','',line)
         nline=re.sub(' of Fold '+ele[6],'',nline)
         if ele[6] not in d1:
-            d1[ele[6]]=nline+'\n'
+            if re.search('test',nline):
+                if oin==0:
+                    d1[ele[6]]=nline+'\n'
+            else:
+                d1[ele[6]]=nline+'\n'
         else:
-            d1[ele[6]]+=nline+'\n'
+            if re.search('test',nline):
+                if oin==0:
+                    d1[ele[6]]+=nline+'\n'
+            else:
+                d1[ele[6]]+=nline+'\n'
         if re.search('test AUC',line):
             d2[ele[6]]=float(ele[-1])
     res=sorted(d2.items(), key = lambda kv:(kv[1], kv[0]), reverse = True)
     o=open(rdir+'/final_predict_metrics.txt','w+')
     o.write(d1[res[0][0]])
     tfold=res[0][0]
+    #print(tfold)
     for filename in os.listdir(temd):
         if re.search('val',filename):continue
         if re.search('prob',filename):
@@ -646,6 +655,7 @@ def pack_output_wwl(tem,rdir):
             pre=re.sub('_'+fd,'',pre)
             if fd=="fold"+str(tfold):
                 os.system('cp '+temd+'/'+filename+' '+rdir+'/'+pre+'.txt')
+    #exit()
     if tem==0:
         #True
         os.system('rm -rf '+temd)
@@ -773,7 +783,7 @@ def load_dcs(infile,dcs):
         dcs[cs]=ele[0]
         cs+=1
 
-def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse,vnode,uf,bsize,rfi):
+def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse,vnode,uf,bsize,rfi,oin):
     if not rseed==0:
         setup_seed(rseed)
     # Load species name -> for feature importance
@@ -903,14 +913,14 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         #graph=run_MLP_embedding.build_graph_mlp('../New_datasets/T2D_data_2012_Trans/T2D_eggNOG_norm.txt',train_idx,val_idx,meta,disease,fn+1,gdir)
         if doadpt==1 and len(test_idx)>12:
             if reverse==0 and uf==0:
-                graph=run_MLP_embedding_da.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
+                graph=run_MLP_embedding_da.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize,oin)
             else:
-                graph=run_MLP_embedding_da.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
+                graph=run_MLP_embedding_da.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize,oin)
         else:
             if reverse==0 and uf==0:
-                graph=run_MLP_embedding.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
+                graph=run_MLP_embedding.build_graph_mlp(eg_fs_sf,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize,oin)
             else:
-                graph=run_MLP_embedding.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize)
+                graph=run_MLP_embedding.build_graph_mlp(insp,train_idx,val_idx,meta,disease,fn+1,gdir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize,oin)
 
         #exit()
         
@@ -956,8 +966,8 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         #exit()
         model=GCN(nfeat=features.shape[1], nhid=32, nclass=labels.max().item() + 1, dropout=0.5)
         optimizer = torch.optim.Adam(model.parameters(),lr=0.01, weight_decay=1e-5)
-        max_val_auc=0
-        max_test_auc=0
+        max_val_auc=-1
+        max_test_auc=-1
         #max_test_acc=0
         for epoch in range(150):
             val_auc=train(epoch,train_idx,val_idx,model,optimizer,features,adj,labels,o1,max_val_auc,rdir,fn+1,classes_dict,tid2name,wwl,1,close_cv)
@@ -967,9 +977,9 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
             ### New part for testing datasets
             if wwl==1 and close_cv==0:
                 if len(test_idx)<13:
-                    test_auc=test_new_acc(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1)
+                    test_auc=test_new_acc(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1,oin)
                 else:
-                    test_auc=test(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1)
+                    test_auc=test(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1,oin)
                 if test_auc>max_test_auc:
                     max_test_auc=test_auc
                 if test_auc>btauc:
@@ -985,9 +995,9 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
             else:
                 if wwl==1:
                     if len(test_idx)<13:
-                        test_auc=test_new_acc(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1)
+                        test_auc=test_new_acc(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1,oin)
                     else:
-                        test_auc=test(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1)
+                        test_auc=test(model,test_idx,features,adj,labels,o1,max_test_auc,rdir,fn+1,classes_dict,tid2name,1,oin)
                     if test_auc>max_test_auc:
                         max_test_auc=test_auc
                     if test_auc>btauc:
@@ -1059,7 +1069,7 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
     # Reorganize final output ------
     tem=1
     if wwl==1:
-        pack_output_wwl(tem,rdir)
+        pack_output_wwl(tem,rdir,oin)
     else:
         pack_output_nl(tem,rdir)
     feature_id=list(range(int(features.shape[1])))
@@ -1275,16 +1285,16 @@ def main():
     if not out:
         out="GDmicro_res"
     
-    indir=preprocess(infile,train_mode,disease,out)
+    indir,oin=preprocess(infile,train_mode,disease,out)
     #print(indir)
     #exit()
     
     if train_mode==0:
         input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features=scan_input(indir,disease,uf)
-        run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse,vnode,uf,bsize,rfi)
+        run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,cvfold,doadpt,insp,fnum,nnum,close_cv,anode,reverse,vnode,uf,bsize,rfi,oin)
     else:
         input_fs,eg_fs,eg_fs_norm,meta,insp,pre_features=scan_input_train_mode(indir,disease,uf)
-        run_GCN_train_mode.run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode,reverse,uf)
+        run_GCN_train_mode.run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode,reverse,uf,rfi)
 
 
 

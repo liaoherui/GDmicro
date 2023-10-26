@@ -411,7 +411,7 @@ def test_unknown(model,idx_test,features,adj,rdir,fn,classes_dict,tid2name,recor
 
 
 
-def test(model,idx_test,features,adj,labels,o,max_test_auc,rdir,fn,classes_dict,tid2name,record):
+def test(model,idx_test,features,adj,labels,o,max_test_auc,rdir,fn,classes_dict,tid2name,record,oin):
     model.eval()
     output=model(features,adj)
     loss_test=torch.nn.functional.nll_loss(output[idx_test], labels[idx_test])
@@ -420,7 +420,8 @@ def test(model,idx_test,features,adj,labels,o,max_test_auc,rdir,fn,classes_dict,
     #exit()
     acc_test=accuracy(output[idx_test],labels[idx_test])
     auc_test=AUC(output[idx_test], labels[idx_test])
-    print(" | Test set results:","loss={:.4f}".format(loss_test.item()),"accuracy={:.4f}".format(acc_test.item()),"AUC={:.4f}".format(auc_test.item()))
+    if oin==0:
+        print(" | Test set results:","loss={:.4f}".format(loss_test.item()),"accuracy={:.4f}".format(acc_test.item()),"AUC={:.4f}".format(auc_test.item()))
     o.write(" | Test set results:"+"loss={:.4f}".format(loss_test.item())+" accuracy: {:.4f}".format(acc_test.item())+" AUC: {:.4f}".format(auc_test.item())+'\n')
     if auc_test>max_test_auc and record==1:
         o3=open(rdir+'/sample_prob_fold'+str(fn)+'_test.txt','w+')
@@ -440,14 +441,17 @@ def test(model,idx_test,features,adj,labels,o,max_test_auc,rdir,fn,classes_dict,
             c+=1
     return auc_test
 
-def test_new_acc(model,idx_test,features,adj,labels,o,max_test_acc,rdir,fn,classes_dict,tid2name,record):
+def test_new_acc(model,idx_test,features,adj,labels,o,max_test_acc,rdir,fn,classes_dict,tid2name,record,oin):
     model.eval()
     output=model(features,adj)
     loss_test=torch.nn.functional.nll_loss(output[idx_test], labels[idx_test])
     preds=output[idx_test].max(1)[1].type_as(labels[idx_test])
     acc_test=accuracy(output[idx_test],labels[idx_test])
     auc_test=AUC(output[idx_test], labels[idx_test])
-    print(" | Test set results:","loss={:.4f}".format(loss_test.item()),"accuracy={:.4f}".format(acc_test.item()),"AUC={:.4f}".format(auc_test.item()))
+    if np.isnan(auc_test):
+        auc_test=acc_test
+    if oin==0:
+        print(" | Test set results:","loss={:.4f}".format(loss_test.item()),"accuracy={:.4f}".format(acc_test.item()),"AUC={:.4f}".format(auc_test.item()))
     o.write(" | Test set results:"+"loss={:.4f}".format(loss_test.item())+" accuracy: {:.4f}".format(acc_test.item())+" AUC: {:.4f}".format(auc_test.item())+'\n')
     if acc_test>max_test_acc and record==1:
         o3=open(rdir+'/sample_prob_fold'+str(fn)+'_test.txt','w+')

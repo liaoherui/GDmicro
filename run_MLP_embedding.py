@@ -113,7 +113,7 @@ def AUC(output,labels):
     auc=metrics.auc(fpr,tpr)
     return auc
 
-def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize):
+def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx,kneighbor,rseed,wwl,rdir,close_cv,bsize,oin):
     if not rseed==0:
         setup_seed(rseed)
     o=open(odir+'/train_res_stat_Fold'+str(fn)+'.txt','w+')
@@ -150,8 +150,8 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
     max_val_auc=0
     max_train_acc=0
     max_train_auc=0
-    max_test_acc=0
-    max_test_auc=0
+    max_test_acc=-1
+    max_test_auc=-1
     go=0
     for i in range(10):
 
@@ -230,7 +230,10 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
         if wwl==1:
             test_accuracy=accuracy_score(y_test_t,pre_lab)
             test_auc=AUC(output,y_test_t)
-            print("test_accuracy:",test_accuracy,"test_AUC:",test_auc)
+            if len(y_test_t)<13:
+                test_auc=test_accuracy
+            if oin==0:
+                print("test_accuracy:",test_accuracy,"test_AUC:",test_auc)
             if close_cv==0:
                 o.write("Train accuracy: "+str(train_acc)+" Train AUC: "+str(train_auc)+"\nVal accuracy: "+str(val_accuracy)+" Val AUC: "+str(val_auc)+"\nTest accuracy: "+str(test_accuracy)+" Test AUC: "+str(test_auc)+'\n')
             else:
@@ -253,10 +256,13 @@ def build_graph_mlp(inmatrixf,train_idx,val_idx,inmetaf,disease,fn,odir,test_idx
                         np.savetxt(ofile2,feature_out_val)
                     np.savetxt(ofile3,feature_out_test)
             '''
+            #print('Herui_check :',test_auc,max_test_auc)
             if test_auc>max_test_auc:
                 max_test_acc=test_accuracy
                 max_test_auc=test_auc
                 np.savetxt(ofile1,feature_out)
+                #print('Check_res ',ofile1)
+                #exit()
                 if close_cv==0:
                     np.savetxt(ofile2,feature_out_val)
                 np.savetxt(ofile3,feature_out_test)
