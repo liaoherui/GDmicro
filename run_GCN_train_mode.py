@@ -562,7 +562,7 @@ def load_dcs(infile,dcs):
  
 
 
-def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode,reverse,uf):
+def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,fnum,nnum,pre_features,anode,reverse,uf,rfi):
     if not rseed==0:
         setup_seed(rseed)
     dcs={}
@@ -692,23 +692,23 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,rseed,cvfold,insp,f
                 max_val_auc=val_auc
         #fn+=1
         ## Feature importance
-        
-        selected={}
-        selected_arr=[]
-        o3=open(rdir+'/feature_importance_fold'+str(fn+1)+'.txt','w+')
-        o4 = open(rdir + '/feature_local_importance_fold' + str(fn + 1) + '.txt', 'w+')
+        if rfi==1: 
+            selected={}
+            selected_arr=[]
+            o3=open(rdir+'/feature_importance_fold'+str(fn+1)+'.txt','w+')
+            o4 = open(rdir + '/feature_local_importance_fold' + str(fn + 1) + '.txt', 'w+')
         #o4=open(rdir+'/feature_importance_iterative_fold'+str(fn+1)+'.txt','w+')
-        uid=uuid.uuid1().hex
-        ot=open(uid+'.log','w+')
-        sid,sname=feature_importance_check(selected,selected_arr,feature_id,train_idx,val_idx,features,adj,labels,rdir,fn,classes_dict,tid2name,o3,ot,dcs,fnum,o4)
-        ot.close()
-        os.system('rm '+uid+'.log')
+            uid=uuid.uuid1().hex
+            ot=open(uid+'.log','w+')
+            sid,sname=feature_importance_check(selected,selected_arr,feature_id,train_idx,val_idx,features,adj,labels,rdir,fn,classes_dict,tid2name,o3,ot,dcs,fnum,o4)
+            ot.close()
+            os.system('rm '+uid+'.log')
 
-        uid=uuid.uuid1().hex
-        ot2=open(uid+'.log','w+')
-        detect_dsp(graph,eg_fs_norm,feature_id,labels_raw,labels,adj,train_idx,val_idx,rdir,ot2,classes_dict,tid2name,sid,sname,fn)
-        ot2.close()
-        os.system('rm '+uid+'.log')
+            uid=uuid.uuid1().hex
+            ot2=open(uid+'.log','w+')
+            detect_dsp(graph,eg_fs_norm,feature_id,labels_raw,labels,adj,train_idx,val_idx,rdir,ot2,classes_dict,tid2name,sid,sname,fn)
+            ot2.close()
+            os.system('rm '+uid+'.log')
         
 
         ## Node importance
