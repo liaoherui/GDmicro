@@ -4,7 +4,7 @@
 Input and core components:  __GDmicro takes microbioal compositional abundance data as input.__ It utilizes GCN and deep adaptation network to improve the classification performance and robustness. Furthermore, it can identify potential biomarkers and indicate how these biomarkers affect hosts' disease status.
 
 You can use GDmicro to:
- 1. Classify disease status for your test samples (binary classification - healthy or disease). As shown in our experiments, GDmicro has good performance even training and test data are from different studies and sampled from different countries.
+ 1. Classify disease status for your test samples (binary classification - healthy or disease).
  2. Explore disease-related species (potential biomarkers).
  3. Explore the biomarkers' contribution to the hosts' disease status.
  4. Explore the sample relationship of your metagenomic samples through the knn graph constructed by GDmicro.
