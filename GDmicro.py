@@ -465,7 +465,7 @@ def detect_dsp(graph, eg_fs_norm,feature_id, labels_raw,labels,adj, train_id, te
 
 
 
-def feature_importance_check(selected,selected_arr,feature_id,train_idx,val_idx,test_idx,features,adj,labels,rdir,fn,classes_dict,tid2name,o3,wwl,ot,dcs,fnum,close_cv,o4,eg_fs_norm):
+def feature_importance_check(selected,selected_arr,feature_id,train_idx,val_idx,test_idx,features,adj,labels,rdir,fn,classes_dict,tid2name,o3,wwl,ot,dcs,fnum,close_cv,o4,eg_fs_norm,oin):
     setup_seed(10)
     cround=1
     top100={}
@@ -494,7 +494,7 @@ def feature_importance_check(selected,selected_arr,feature_id,train_idx,val_idx,
                 train_auc,train_prob=train_fs(epoch,np.array(train_idx),np.array(val_idx),model,optimizer,features_tem,adj,labels,ot,max_train_auc,rdir,fn+1,classes_dict,tid2name,wwl,0,close_cv)
                 train_auc=float(train_auc)
                 if wwl==1:
-                    test_auc=test(model,test_idx,features_tem,adj,labels,ot,max_test_auc,rdir,fn+1,classes_dict,tid2name,0)
+                    test_auc=test(model,test_idx,features_tem,adj,labels,ot,max_test_auc,rdir,fn+1,classes_dict,tid2name,0,oin)
                     test_auc=float(test_auc)
                     if train_auc>max_train_auc:
                         max_train_auc=train_auc
@@ -1083,7 +1083,7 @@ def run(input_fs,eg_fs,eg_fs_norm,meta,disease,out,kneighbor,pre_features,rseed,
         o4 = open(rdir + '/feature_local_importance.txt', 'w+')
         uid = uuid.uuid1().hex
         ot = open(uid + '.log', 'w+')
-        sid,sname=feature_importance_check(selected, selected_arr, feature_id, bset[0], bset[1], test_idx, features, bset[3],bset[2], rdir, bset[4], classes_dict, tid2name, o3, wwl, ot, dcs, fnum, close_cv,o4,eg_fs_norm)
+        sid,sname=feature_importance_check(selected, selected_arr, feature_id, bset[0], bset[1], test_idx, features, bset[3],bset[2], rdir, bset[4], classes_dict, tid2name, o3, wwl, ot, dcs, fnum, close_cv,o4,eg_fs_norm,oin)
         ot.close()
         os.system('rm ' + uid + '.log')
         #### Biomarker influence score
