@@ -74,7 +74,7 @@ The first column refers to the sample ID, the second column refers to the class 
 
 For missing values in the "disease" or "study" column, you can replace them with "Unknown".
 
-For users' reference, all datasets used in the paper can be found in the "Input_files" folder.
+**For users' reference, all datasets used in the paper can be found in the "Input_files" folder.**
 
 
 ### Use GDmicro to classify disease status for input samples.<BR/>
